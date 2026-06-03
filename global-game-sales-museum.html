@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Game Sales Walkthrough — 3D Museum</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#050810;color:#e8eaf0;font-family:'Space Grotesk',sans-serif;overflow:hidden;width:100vw;height:100vh;}
+
+  #canvas{display:block;width:100%;height:100%;}
+
+  /* HUD */
+  #hud{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;}
+
+  #title-bar{position:absolute;top:20px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;}
+  #title-bar h1{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:4px;color:#7dd3fc;text-transform:uppercase;opacity:0.85;}
+
+  #controls-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;gap:12px;align-items:center;pointer-events:none;}
+  .hint-key{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+    border-radius:6px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:1px;}
+
+  /* Left panel — exhibit list / filter */
+  #sidebar{position:absolute;left:0;top:0;bottom:0;width:260px;
+    background:rgba(5,8,16,0.92);border-right:1px solid rgba(125,211,252,0.12);
+    display:flex;flex-direction:column;pointer-events:all;
+    transform:translateX(0);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
+  #sidebar.hidden{transform:translateX(-260px);}
+
+  #sidebar-header{padding:20px 18px 14px;border-bottom:1px solid rgba(125,211,252,0.1);}
+  #sidebar-header h2{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:#7dd3fc;margin-bottom:12px;}
+
+  .filter-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-btn{background:transparent;border:1px solid rgba(125,211,252,0.25);border-radius:20px;
+    color:rgba(255,255,255,0.55);font-size:10px;letter-spacing:1px;padding:4px 10px;
+    cursor:pointer;transition:all 0.2s;font-family:'Space Grotesk',sans-serif;}
+  .filter-btn:hover,.filter-btn.active{background:rgba(125,211,252,0.15);border-color:#7dd3fc;color:#7dd3fc;}
+
+  #exhibit-list{flex:1;overflow-y:auto;padding:10px 0;}
+  #exhibit-list::-webkit-scrollbar{width:3px;}
+  #exhibit-list::-webkit-scrollbar-thumb{background:rgba(125,211,252,0.25);border-radius:2px;}
+
+  .exhibit-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;
+    transition:background 0.15s;border-left:2px solid transparent;}
+  .exhibit-item:hover{background:rgba(125,211,252,0.06);}
+  .exhibit-item.active{background:rgba(125,211,252,0.1);border-left-color:#7dd3fc;}
+  .exhibit-item.hidden-item{opacity:0.2;pointer-events:none;}
+
+  .rank-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:9px;font-weight:700;flex-shrink:0;}
+  .exhibit-info{flex:1;min-width:0;}
+  .exhibit-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .exhibit-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;}
+  .exhibit-sales{font-size:11px;font-weight:600;color:#7dd3fc;white-space:nowrap;}
+
+  /* Right panel — detail */
+  #detail-panel{position:absolute;right:0;top:0;bottom:0;width:300px;
+    background:rgba(5,8,16,0.94);border-left:1px solid rgba(125,211,252,0.12);
+    display:flex;flex-direction:column;pointer-events:all;
+    transform:translateX(300px);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
+  #detail-panel.open{transform:translateX(0);}
+
+  #detail-close{position:absolute;top:16px;right:16px;background:transparent;border:none;
+    color:rgba(255,255,255,0.4);font-size:18px;cursor:pointer;line-height:1;padding:4px;}
+  #detail-close:hover{color:#fff;}
+
+  #detail-content{padding:24px 20px;overflow-y:auto;flex:1;}
+  #detail-content::-webkit-scrollbar{width:3px;}
+  #detail-content::-webkit-scrollbar-thumb{background:rgba(125,211,252,0.2);border-radius:2px;}
+
+  .detail-rank{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:#7dd3fc;margin-bottom:8px;}
+  .detail-title{font-size:20px;font-weight:700;line-height:1.2;margin-bottom:4px;}
+  .detail-dev{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:20px;}
+
+  .detail-sales-big{font-family:'Orbitron',monospace;font-size:32px;font-weight:700;
+    color:#7dd3fc;line-height:1;margin-bottom:4px;}
+  .detail-sales-label{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.35);margin-bottom:20px;}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .stat-cell{background:rgba(125,211,252,0.06);border:1px solid rgba(125,211,252,0.1);
+    border-radius:8px;padding:10px 12px;}
+  .stat-label{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;}
+  .stat-val{font-size:14px;font-weight:600;}
+
+  .detail-bar-wrap{margin-bottom:20px;}
+  .detail-bar-label{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px;display:flex;justify-content:space-between;}
+  .detail-bar-bg{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+  .detail-bar-fill{height:100%;border-radius:2px;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
+
+  .detail-desc{font-size:12px;line-height:1.7;color:rgba(255,255,255,0.55);}
+  .detail-genre-tag{display:inline-block;background:rgba(125,211,252,0.1);border:1px solid rgba(125,211,252,0.2);
+    border-radius:12px;font-size:10px;color:#7dd3fc;padding:3px 10px;margin:0 4px 6px 0;}
+
+  /* Tour mode */
+  #tour-bar{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);
+    background:rgba(5,8,16,0.9);border:1px solid rgba(125,211,252,0.2);border-radius:30px;
+    padding:10px 20px;display:flex;align-items:center;gap:14px;pointer-events:all;
+    opacity:0;transition:opacity 0.3s;}
+  #tour-bar.visible{opacity:1;}
+
+  #tour-bar button{background:transparent;border:1px solid rgba(125,211,252,0.3);border-radius:20px;
+    color:#7dd3fc;font-size:11px;letter-spacing:1px;padding:6px 14px;cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
+  #tour-bar button:hover{background:rgba(125,211,252,0.12);}
+  #tour-info{font-size:11px;color:rgba(255,255,255,0.5);min-width:120px;text-align:center;}
+
+  /* Top toolbar */
+  #toolbar{position:absolute;top:16px;right:16px;display:flex;gap:8px;pointer-events:all;}
+  .tool-btn{background:rgba(5,8,16,0.8);border:1px solid rgba(125,211,252,0.2);border-radius:8px;
+    color:rgba(255,255,255,0.6);font-size:11px;letter-spacing:1px;padding:7px 14px;cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
+  .tool-btn:hover{border-color:#7dd3fc;color:#7dd3fc;}
+  .tool-btn.active{background:rgba(125,211,252,0.12);border-color:#7dd3fc;color:#7dd3fc;}
+
+  #toggle-sidebar-btn{position:absolute;top:16px;left:16px;pointer-events:all;
+    background:rgba(5,8,16,0.8);border:1px solid rgba(125,211,252,0.2);border-radius:8px;
+    color:rgba(255,255,255,0.6);font-size:11px;letter-spacing:1px;padding:7px 14px;cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
+  #toggle-sidebar-btn:hover{border-color:#7dd3fc;color:#7dd3fc;}
+
+  /* Loading */
+  #loading{position:fixed;inset:0;background:#050810;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;z-index:100;transition:opacity 0.8s;}
+  #loading.done{opacity:0;pointer-events:none;}
+  #loading h1{font-family:'Orbitron',monospace;font-size:18px;letter-spacing:6px;color:#7dd3fc;margin-bottom:16px;}
+  #loading p{font-size:12px;letter-spacing:2px;color:rgba(255,255,255,0.35);}
+  .load-bar{width:200px;height:2px;background:rgba(255,255,255,0.08);border-radius:1px;margin-top:24px;overflow:hidden;}
+  .load-progress{height:100%;background:#7dd3fc;border-radius:1px;animation:loadanim 1.5s ease forwards;}
+  @keyframes loadanim{from{width:0}to{width:100%}}
+
+  /* Minimap */
+  #minimap{position:absolute;bottom:80px;right:16px;width:110px;height:110px;
+    background:rgba(5,8,16,0.8);border:1px solid rgba(125,211,252,0.15);border-radius:8px;
+    pointer-events:none;overflow:hidden;}
+  #minimap canvas{width:100%;height:100%;}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <h1>GAME MUSEUM</h1>
+  <p>GLOBAL SALES WALKTHROUGH</p>
+  <div class="load-bar"><div class="load-progress"></div></div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <div id="title-bar">
+    <h1>★ Global Game Sales Walkthrough ★</h1>
+  </div>
+
+  <button id="toggle-sidebar-btn" onclick="toggleSidebar()">☰ EXHIBITS</button>
+
+  <div id="toolbar">
+    <button class="tool-btn" id="tour-btn" onclick="toggleTour()">▶ GUIDED TOUR</button>
+    <button class="tool-btn" id="view-btn" onclick="cycleView()">⊕ TOP VIEW</button>
+    <button class="tool-btn" onclick="resetCamera()">⌂ RESET</button>
+  </div>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h2>★ Exhibits</h2>
+      <div class="filter-row" id="filter-row"></div>
+    </div>
+    <div id="exhibit-list"></div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div id="detail-panel">
+    <button id="detail-close" onclick="closeDetail()">✕</button>
+    <div id="detail-content"></div>
+  </div>
+
+  <!-- Tour bar -->
+  <div id="tour-bar" id="tour-bar">
+    <button onclick="tourStep(-1)">◀ PREV</button>
+    <span id="tour-info">Exhibit 1 / 12</span>
+    <button onclick="tourStep(1)">NEXT ▶</button>
+    <button onclick="toggleTour()" style="margin-left:6px;border-color:rgba(255,100,100,0.4);color:rgba(255,150,150,0.8);">✕ END</button>
+  </div>
+
+  <!-- Controls hint -->
+  <div id="controls-hint">
+    <span class="hint-key">WASD / ARROWS Move</span>
+    <span class="hint-key">DRAG Orbit</span>
+    <span class="hint-key">SCROLL Zoom</span>
+    <span class="hint-key">CLICK Inspect</span>
+  </div>
+
+  <!-- Minimap -->
+  <div id="minimap"><canvas id="minimap-canvas" width="110" height="110"></canvas></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const GAMES = [
+  {id:0, rank:1,  title:"Minecraft",             dev:"Mojang",           sales:238, year:2011, genre:"Sandbox",    platform:"Multi",   color:0x4ade80},
+  {id:1, rank:2,  title:"GTA V",                 dev:"Rockstar Games",   sales:195, year:2013, genre:"Action",     platform:"Multi",   color:0xf97316},
+  {id:2, rank:3,  title:"Tetris (EA Mobile)",    dev:"EA",               sales:100, year:2006, genre:"Puzzle",     platform:"Mobile",  color:0xa78bfa},
+  {id:3, rank:4,  title:"Wii Sports",            dev:"Nintendo",         sales:83,  year:2006, genre:"Sports",     platform:"Wii",     color:0xfbbf24},
+  {id:4, rank:5,  title:"PUBG",                  dev:"PUBG Corp",        sales:75,  year:2017, genre:"Battle Royale",platform:"Multi", color:0xf43f5e},
+  {id:5, rank:6,  title:"Mario Kart 8 Deluxe",  dev:"Nintendo",         sales:67,  year:2017, genre:"Racing",     platform:"Switch",  color:0x38bdf8},
+  {id:6, rank:7,  title:"Super Mario Bros.",     dev:"Nintendo",         sales:58,  year:1985, genre:"Platformer", platform:"NES",     color:0xef4444},
+  {id:7, rank:8,  title:"Red Dead Redemption 2", dev:"Rockstar Games",   sales:55,  year:2018, genre:"Action",     platform:"Multi",   color:0x78716c},
+  {id:8, rank:9,  title:"Pokémon R/G/B/Y",       dev:"Game Freak",       sales:47,  year:1996, genre:"RPG",        platform:"GB",      color:0xfcd34d},
+  {id:9, rank:10, title:"Terraria",              dev:"Re-Logic",         sales:44,  year:2011, genre:"Sandbox",    platform:"Multi",   color:0x86efac},
+  {id:10,rank:11, title:"Wii Fit + Plus",        dev:"Nintendo",         sales:43,  year:2007, genre:"Fitness",    platform:"Wii",     color:0x67e8f9},
+  {id:11,rank:12, title:"Call of Duty: MW",      dev:"Infinity Ward",    sales:41,  year:2007, genre:"Shooter",    platform:"Multi",   color:0xd97706},
+  {id:12,rank:13, title:"Pac-Man",               dev:"Namco / Atari",    sales:40,  year:1980, genre:"Arcade",     platform:"Arcade",  color:0xfde047},
+  {id:13,rank:14, title:"Diablo III",            dev:"Blizzard",         sales:35,  year:2012, genre:"RPG",        platform:"Multi",   color:0xc084fc},
+  {id:14,rank:15, title:"The Elder Scrolls V",   dev:"Bethesda",         sales:30,  year:2011, genre:"RPG",        platform:"Multi",   color:0xb45309},
+];
+
+const GENRES = [...new Set(GAMES.map(g=>g.genre))];
+const ALL_GENRES = ["All", ...GENRES];
+let activeFilter = "All";
+let tourActive = false;
+let tourIndex = 0;
+let sidebarOpen = true;
+
+// ─── THREE.JS SETUP ──────────────────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050810);
+scene.fog = new THREE.FogExp2(0x050810, 0.018);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 14, 28);
+camera.lookAt(0, 0, 0);
+
+// ─── LIGHTING ────────────────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x112244, 1.2);
+scene.add(ambient);
+
+const sunLight = new THREE.DirectionalLight(0x7dd3fc, 1.5);
+sunLight.position.set(20, 30, 20);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(2048, 2048);
+sunLight.shadow.camera.near = 0.5;
+sunLight.shadow.camera.far = 150;
+sunLight.shadow.camera.left = -60;
+sunLight.shadow.camera.right = 60;
+sunLight.shadow.camera.top = 60;
+sunLight.shadow.camera.bottom = -60;
+scene.add(sunLight);
+
+const fillLight = new THREE.DirectionalLight(0x4433aa, 0.6);
+fillLight.position.set(-15, 10, -10);
+scene.add(fillLight);
+
+// ─── MUSEUM FLOOR ─────────────────────────────────────────────────────────────
+function makeFloor(){
+  // Main floor tiles
+  const floorGeo = new THREE.PlaneGeometry(120, 120, 40, 40);
+  const floorMat = new THREE.MeshStandardMaterial({
+    color:0x0a0f1e, roughness:0.8, metalness:0.1
+  });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI/2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Grid lines
+  const gridHelper = new THREE.GridHelper(120, 60, 0x112244, 0x0d1a33);
+  gridHelper.position.y = 0.01;
+  scene.add(gridHelper);
+
+  // Ceiling glow strips
+  for(let i=-3;i<=3;i++){
+    const stripGeo = new THREE.BoxGeometry(0.2, 0.05, 100);
+    const stripMat = new THREE.MeshStandardMaterial({
+      color:0x7dd3fc, emissive:0x7dd3fc, emissiveIntensity:0.8
+    });
+    const strip = new THREE.Mesh(stripGeo, stripMat);
+    strip.position.set(i*8, 9.95, 0);
+    scene.add(strip);
+    const ptLight = new THREE.PointLight(0x7dd3fc, 0.3, 20);
+    ptLight.position.set(i*8, 9, 0);
+    scene.add(ptLight);
+  }
+
+  // Walls
+  const wallMat = new THREE.MeshStandardMaterial({color:0x060c1a, roughness:0.9});
+  const wallConfigs = [
+    {w:120,h:10,d:0.5, x:0, y:5, z:-60},
+    {w:120,h:10,d:0.5, x:0, y:5, z:60},
+    {w:0.5,h:10,d:120, x:-60,y:5, z:0},
+    {w:0.5,h:10,d:120, x:60, y:5, z:0},
+  ];
+  wallConfigs.forEach(c=>{
+    const m = new THREE.Mesh(new THREE.BoxGeometry(c.w,c.h,c.d), wallMat);
+    m.position.set(c.x,c.y,c.z);
+    m.receiveShadow = true;
+    scene.add(m);
+  });
+}
+makeFloor();
+
+// ─── EXHIBIT PEDESTALS + COLUMNS ─────────────────────────────────────────────
+// Layout: 3 rows × 5 cols, with last row only 2 (rank 11-12)
+const LAYOUT = [];
+const cols = 5;
+const spacingX = 14;
+const spacingZ = 14;
+const startX = -((cols-1)/2)*spacingX;
+const startZ = -24;
+GAMES.forEach((g,i)=>{
+  const col = i % cols;
+  const row = Math.floor(i / cols);
+  LAYOUT.push({
+    x: startX + col*spacingX,
+    z: startZ + row*spacingZ
+  });
+});
+
+const exhibitMeshes = [];
+const exhibitLabels = []; // sprite labels
+
+function makeTextSprite(text, opts={}){
+  const {fontSize=28, color='#ffffff', bg='rgba(5,8,22,0.85)', width=256, height=64} = opts;
+  const cvs = document.createElement('canvas');
+  cvs.width = width; cvs.height = height;
+  const ctx = cvs.getContext('2d');
+  ctx.fillStyle = bg;
+  ctx.roundRect(0,0,width,height,12);
+  ctx.fill();
+  ctx.fillStyle = color;
+  ctx.font = `500 ${fontSize}px 'Space Grotesk', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, width/2, height/2);
+  const tex = new THREE.CanvasTexture(cvs);
+  const mat = new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false});
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(width/40, height/40, 1);
+  return sprite;
+}
+
+function hexToThree(hex){ return new THREE.Color(hex); }
+
+GAMES.forEach((game, i)=>{
+  const pos = LAYOUT[i];
+  const heightScale = (game.sales / 238) * 5 + 0.5;
+  const color = new THREE.Color(game.color);
+
+  // Pedestal base
+  const baseGeo = new THREE.BoxGeometry(3.5, 0.3, 3.5);
+  const baseMat = new THREE.MeshStandardMaterial({color:0x0d1a33, roughness:0.7, metalness:0.3});
+  const base = new THREE.Mesh(baseGeo, baseMat);
+  base.position.set(pos.x, 0.15, pos.z);
+  base.receiveShadow = true;
+  scene.add(base);
+
+  // Main column (sales bar)
+  const colGeo = new THREE.BoxGeometry(2.4, heightScale, 2.4);
+  const colMat = new THREE.MeshStandardMaterial({
+    color, roughness:0.4, metalness:0.6,
+    emissive: color, emissiveIntensity:0.15
+  });
+  const col = new THREE.Mesh(colGeo, colMat);
+  col.position.set(pos.x, heightScale/2 + 0.3, pos.z);
+  col.castShadow = true;
+  col.receiveShadow = true;
+  col.userData = {gameId: i, type:'exhibit'};
+  scene.add(col);
+  exhibitMeshes.push(col);
+
+  // Glow ring at top
+  const ringGeo = new THREE.TorusGeometry(1.4, 0.06, 8, 32);
+  const ringMat = new THREE.MeshStandardMaterial({
+    color, emissive:color, emissiveIntensity:1.2, roughness:0.2
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI/2;
+  ring.position.set(pos.x, heightScale + 0.3 + 0.08, pos.z);
+  scene.add(ring);
+
+  // Point light at top of column
+  const ptL = new THREE.PointLight(game.color, 0.7, 8);
+  ptL.position.set(pos.x, heightScale + 1.5, pos.z);
+  scene.add(ptL);
+
+  // Rank orb
+  const orbGeo = new THREE.SphereGeometry(0.35, 16, 16);
+  const orbMat = new THREE.MeshStandardMaterial({
+    color:0x050810, emissive:color, emissiveIntensity:0.8, roughness:0.1, metalness:0.9
+  });
+  const orb = new THREE.Mesh(orbGeo, orbMat);
+  orb.position.set(pos.x, heightScale + 0.3 + 0.8, pos.z);
+  orb.userData = {gameId: i, type:'exhibit'};
+  scene.add(orb);
+  exhibitMeshes.push(orb);
+
+  // Name label sprite (above orb)
+  const nameSprite = makeTextSprite(game.title, {
+    fontSize:20, color:'#e8eaf0', width:220, height:48,
+    bg:'rgba(5,8,22,0.0)'
+  });
+  nameSprite.position.set(pos.x, heightScale + 0.3 + 2.0, pos.z);
+  scene.add(nameSprite);
+
+  // Sales label sprite
+  const salesSprite = makeTextSprite(`${game.sales}M`, {
+    fontSize:24, color:'#7dd3fc', width:120, height:50,
+    bg:'rgba(5,8,22,0.0)'
+  });
+  salesSprite.position.set(pos.x, heightScale + 0.3 + 1.4, pos.z);
+  scene.add(salesSprite);
+
+  // Rank number on front face of column
+  const rankSprite = makeTextSprite(`#${game.rank}`, {
+    fontSize:32, color:'#fbbf24', width:80, height:60,
+    bg:'rgba(5,8,22,0.0)'
+  });
+  rankSprite.position.set(pos.x, heightScale/2 + 0.3, pos.z + 1.22);
+  rankSprite.scale.set(2, 1.5, 1);
+  scene.add(rankSprite);
+});
+
+// ─── DECORATIVE ARCHES ────────────────────────────────────────────────────────
+function makeArch(x, z, rotY=0){
+  const archGrp = new THREE.Group();
+  const legMat = new THREE.MeshStandardMaterial({color:0x0d1a33, roughness:0.8, metalness:0.4});
+  // Left leg
+  const ll = new THREE.Mesh(new THREE.BoxGeometry(0.4, 7, 0.4), legMat);
+  ll.position.set(-2, 3.5, 0); archGrp.add(ll);
+  // Right leg
+  const rl = new THREE.Mesh(new THREE.BoxGeometry(0.4, 7, 0.4), legMat);
+  rl.position.set(2, 3.5, 0); archGrp.add(rl);
+  // Top beam
+  const tb = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.4, 0.4), legMat);
+  tb.position.set(0, 7.2, 0); archGrp.add(tb);
+  // Glow accent
+  const glowMat = new THREE.MeshStandardMaterial({
+    color:0x7dd3fc, emissive:0x7dd3fc, emissiveIntensity:1.0
+  });
+  const glow = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.08, 0.08), glowMat);
+  glow.position.set(0, 7.45, 0); archGrp.add(glow);
+
+  archGrp.position.set(x, 0, z);
+  archGrp.rotation.y = rotY;
+  archGrp.traverse(m=>{ if(m.isMesh){ m.castShadow=true; m.receiveShadow=true; }});
+  scene.add(archGrp);
+}
+// Row separators
+for(let row=0; row<3; row++){
+  for(let col=-2; col<=2; col++){
+    makeArch(startX + col*spacingX, startZ + row*spacingZ - 7, 0);
+  }
+}
+
+// ─── STARFIELD ────────────────────────────────────────────────────────────────
+function makeStars(){
+  const geo = new THREE.BufferGeometry();
+  const verts = [];
+  for(let i=0;i<2000;i++){
+    verts.push(
+      (Math.random()-0.5)*200,
+      Math.random()*60 + 10,
+      (Math.random()-0.5)*200
+    );
+  }
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts,3));
+  const mat = new THREE.PointsMaterial({color:0xaaccff, size:0.08, transparent:true, opacity:0.7});
+  scene.add(new THREE.Points(geo, mat));
+}
+makeStars();
+
+// ─── CAMERA CONTROLS ─────────────────────────────────────────────────────────
+let camTarget = new THREE.Vector3(0, 3, 0);
+let camOffset = new THREE.Vector3(0, 14, 28);
+let isDragging = false;
+let prevMouse = {x:0, y:0};
+let yaw = 0, pitch = 0.45;
+let camRadius = Math.sqrt(camOffset.x**2 + camOffset.y**2 + camOffset.z**2);
+let keys = {};
+let viewMode = 'perspective'; // 'perspective' | 'top'
+
+function resetCamera(){
+  camTarget.set(0, 3, 0);
+  yaw = 0; pitch = 0.45; camRadius = 34;
+  viewMode = 'perspective';
+  document.getElementById('view-btn').textContent = '⊕ TOP VIEW';
+}
+
+function cycleView(){
+  if(viewMode === 'perspective'){
+    viewMode = 'top';
+    pitch = Math.PI/2 - 0.01;
+    camRadius = 55;
+    camTarget.set(0,0,0);
+    document.getElementById('view-btn').textContent = '⊕ 3D VIEW';
+  } else {
+    viewMode = 'perspective';
+    pitch = 0.45;
+    camRadius = 34;
+    document.getElementById('view-btn').textContent = '⊕ TOP VIEW';
+  }
+}
+
+canvas.addEventListener('mousedown', e=>{
+  isDragging = true;
+  prevMouse = {x:e.clientX, y:e.clientY};
+});
+canvas.addEventListener('mouseup', ()=>{ isDragging = false; });
+canvas.addEventListener('mouseleave', ()=>{ isDragging = false; });
+canvas.addEventListener('mousemove', e=>{
+  if(!isDragging) return;
+  const dx = e.clientX - prevMouse.x;
+  const dy = e.clientY - prevMouse.y;
+  yaw -= dx * 0.005;
+  pitch = Math.max(0.08, Math.min(Math.PI/2-0.01, pitch - dy * 0.005));
+  prevMouse = {x:e.clientX, y:e.clientY};
+});
+canvas.addEventListener('wheel', e=>{
+  camRadius = Math.max(5, Math.min(80, camRadius + e.deltaY * 0.05));
+  e.preventDefault();
+}, {passive:false});
+
+// Touch support
+let lastTouch = null;
+canvas.addEventListener('touchstart', e=>{ lastTouch = e.touches[0]; });
+canvas.addEventListener('touchmove', e=>{
+  const t = e.touches[0];
+  const dx = t.clientX - lastTouch.clientX;
+  const dy = t.clientY - lastTouch.clientY;
+  yaw -= dx * 0.006;
+  pitch = Math.max(0.08, Math.min(Math.PI/2-0.01, pitch - dy*0.006));
+  lastTouch = t;
+  e.preventDefault();
+}, {passive:false});
+
+document.addEventListener('keydown', e=>{ keys[e.key.toLowerCase()] = true; });
+document.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()] = false; });
+
+function handleKeyMovement(){
+  const speed = 0.18;
+  const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).multiplyScalar(-speed);
+  const right = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw)).multiplyScalar(speed);
+  if(keys['w']||keys['arrowup'])    camTarget.add(fwd);
+  if(keys['s']||keys['arrowdown'])  camTarget.sub(fwd);
+  if(keys['a']||keys['arrowleft'])  camTarget.sub(right);
+  if(keys['d']||keys['arrowright']) camTarget.add(right);
+  camTarget.x = Math.max(-55, Math.min(55, camTarget.x));
+  camTarget.z = Math.max(-55, Math.min(55, camTarget.z));
+}
+
+function updateCamera(){
+  handleKeyMovement();
+  const cx = camTarget.x + camRadius * Math.cos(pitch) * Math.sin(yaw);
+  const cy = camTarget.y + camRadius * Math.sin(pitch);
+  const cz = camTarget.z + camRadius * Math.cos(pitch) * Math.cos(yaw);
+  camera.position.set(cx, cy, cz);
+  camera.lookAt(camTarget);
+}
+
+// ─── RAYCASTING / CLICK ───────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse2d = new THREE.Vector2();
+let clickStart = {x:0, y:0};
+
+canvas.addEventListener('mousedown', e=>{ clickStart = {x:e.clientX, y:e.clientY}; });
+canvas.addEventListener('click', e=>{
+  const dx = Math.abs(e.clientX - clickStart.x);
+  const dy = Math.abs(e.clientY - clickStart.y);
+  if(dx > 4 || dy > 4) return; // was a drag
+  mouse2d.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse2d.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse2d, camera);
+  const hits = raycaster.intersectObjects(exhibitMeshes);
+  if(hits.length > 0){
+    const gameId = hits[0].object.userData.gameId;
+    if(gameId !== undefined) showDetail(gameId);
+  }
+});
+
+// Hover highlight
+let hoveredMesh = null;
+canvas.addEventListener('mousemove', e=>{
+  if(isDragging) return;
+  mouse2d.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse2d.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse2d, camera);
+  const hits = raycaster.intersectObjects(exhibitMeshes);
+  if(hits.length > 0 && hits[0].object !== hoveredMesh){
+    if(hoveredMesh) hoveredMesh.material.emissiveIntensity = 0.15;
+    hoveredMesh = hits[0].object;
+    hoveredMesh.material.emissiveIntensity = 0.6;
+    canvas.style.cursor = 'pointer';
+  } else if(hits.length === 0 && hoveredMesh){
+    hoveredMesh.material.emissiveIntensity = 0.15;
+    hoveredMesh = null;
+    canvas.style.cursor = 'default';
+  }
+});
+
+// ─── SIDEBAR UI ───────────────────────────────────────────────────────────────
+function buildSidebar(){
+  // Filters
+  const fr = document.getElementById('filter-row');
+  ALL_GENRES.forEach(g=>{
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (g==='All'?' active':'');
+    btn.textContent = g;
+    btn.onclick = ()=>{ activeFilter = g; applyFilter(); };
+    fr.appendChild(btn);
+  });
+  // List
+  buildExhibitList();
+}
+
+function buildExhibitList(){
+  const el = document.getElementById('exhibit-list');
+  el.innerHTML = '';
+  GAMES.forEach(game=>{
+    const item = document.createElement('div');
+    item.className = 'exhibit-item';
+    item.id = `item-${game.id}`;
+    if(activeFilter !== 'All' && game.genre !== activeFilter) item.classList.add('hidden-item');
+    const maxSales = 238;
+    const pct = Math.round(game.sales/maxSales*100);
+    const colorHex = '#' + game.color.toString(16).padStart(6,'0');
+    item.innerHTML = `
+      <div class="rank-badge" style="background:${colorHex}22;color:${colorHex};border:1px solid ${colorHex}44">#${game.rank}</div>
+      <div class="exhibit-info">
+        <div class="exhibit-name">${game.title}</div>
+        <div class="exhibit-sub">${game.genre} · ${game.year}</div>
+      </div>
+      <div class="exhibit-sales">${game.sales}M</div>
+    `;
+    item.onclick = ()=> flyToExhibit(game.id, true);
+    el.appendChild(item);
+  });
+}
+
+function applyFilter(){
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent === activeFilter);
+  });
+  GAMES.forEach(game=>{
+    const el = document.getElementById(`item-${game.id}`);
+    if(!el) return;
+    const visible = activeFilter === 'All' || game.genre === activeFilter;
+    el.classList.toggle('hidden-item', !visible);
+    // Dim 3D column
+    exhibitMeshes.forEach(m=>{
+      if(m.userData.gameId === game.id){
+        m.material.opacity = visible ? 1 : 0.12;
+        m.material.transparent = !visible;
+      }
+    });
+  });
+}
+
+function setActiveItem(id){
+  document.querySelectorAll('.exhibit-item').forEach(el=>el.classList.remove('active'));
+  const el = document.getElementById(`item-${id}`);
+  if(el){ el.classList.add('active'); el.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+}
+
+// ─── DETAIL PANEL ─────────────────────────────────────────────────────────────
+function showDetail(id){
+  const game = GAMES[id];
+  const colorHex = '#'+game.color.toString(16).padStart(6,'0');
+  const maxSales = 238;
+  const pct = Math.round(game.sales/maxSales*100);
+  setActiveItem(id);
+
+  const descriptions = {
+    0:"The best-selling paid game of all time, Minecraft lets players build and explore infinite procedurally generated worlds.",
+    1:"Rockstar's open-world epic set in Los Santos. Hugely profitable through GTA Online continued revenue.",
+    2:"The mobile resurgence of the classic block-stacking game, bundled with older EA mobile platforms.",
+    3:"The pack-in game for Nintendo Wii that introduced millions to motion controls.",
+    4:"PlayerUnknown's Battlegrounds popularized the battle royale genre on PC and mobile.",
+    5:"The definitive kart racer, boosted by Switch's massive install base and DLC content.",
+    6:"The original blockbuster — Mario's debut platformer remains one of history's most sold games.",
+    7:"An epic open-world Western praised for storytelling, graphics, and detailed simulation.",
+    8:"The games that launched one of the most successful media franchises in history.",
+    9:"A 2D sandbox survival adventure that rivals Minecraft in depth and charm.",
+    10:"The Wii's killer fitness app, combining balance board hardware with exercise mini-games.",
+    11:"Modern Warfare redefined military shooters and established the annual CoD cadence.",
+    12:"The arcade legend — one of the earliest games to become a true cultural phenomenon.",
+    13:"Blizzard's dungeon-crawler sequel smashed launch day records and revived the ARPG genre.",
+    14:"Skyrim's legendary open-world RPG has sold across multiple generations of hardware.",
+  };
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-rank" style="color:${colorHex}">RANK #${game.rank} ALL TIME</div>
+    <div class="detail-title">${game.title}</div>
+    <div class="detail-dev">${game.dev} · ${game.year}</div>
+    <div class="detail-sales-big">${game.sales}M</div>
+    <div class="detail-sales-label">COPIES SOLD</div>
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-label">Platform</div>
+        <div class="stat-val" style="font-size:13px">${game.platform}</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Year</div>
+        <div class="stat-val">${game.year}</div>
+      </div>
+    </div>
+    <div class="detail-bar-wrap">
+      <div class="detail-bar-label"><span>Sales vs #1 (Minecraft)</span><span>${pct}%</span></div>
+      <div class="detail-bar-bg"><div class="detail-bar-fill" style="width:0%;background:${colorHex}" data-target="${pct}"></div></div>
+    </div>
+    <div style="margin-bottom:14px">
+      <span class="detail-genre-tag">${game.genre}</span>
+    </div>
+    <div class="detail-desc">${descriptions[id]||'A landmark title in gaming history.'}</div>
+  `;
+  document.getElementById('detail-panel').classList.add('open');
+  // Animate bar
+  setTimeout(()=>{
+    const fill = document.querySelector('.detail-bar-fill');
+    if(fill) fill.style.width = fill.dataset.target + '%';
+  }, 80);
+}
+
+function closeDetail(){
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.exhibit-item').forEach(el=>el.classList.remove('active'));
+}
+
+// ─── FLY TO EXHIBIT ───────────────────────────────────────────────────────────
+let flyAnim = null;
+function flyToExhibit(id, openPanel=false){
+  const pos = LAYOUT[id];
+  const game = GAMES[id];
+  const targetPos = new THREE.Vector3(pos.x, 3, pos.z);
+  const startTarget = camTarget.clone();
+  const startYaw = yaw;
+  const startRadius = camRadius;
+  const endRadius = 16;
+
+  // Angle camera to face exhibit
+  const dx = pos.x - camTarget.x;
+  const dz = pos.z - camTarget.z;
+  let targetYaw = -Math.atan2(dx, dz);
+
+  const duration = 1200;
+  const start = performance.now();
+
+  if(flyAnim) cancelAnimationFrame(flyAnim);
+  function step(now){
+    const t = Math.min((now-start)/duration, 1);
+    const ease = 1 - Math.pow(1-t, 3);
+    camTarget.lerpVectors(startTarget, targetPos, ease);
+    yaw = startYaw + (targetYaw - startYaw) * ease;
+    camRadius = startRadius + (endRadius - startRadius) * ease;
+    if(t < 1) flyAnim = requestAnimationFrame(step);
+    else if(openPanel) showDetail(id);
+  }
+  flyAnim = requestAnimationFrame(step);
+  setActiveItem(id);
+}
+
+// ─── GUIDED TOUR ──────────────────────────────────────────────────────────────
+let tourInterval = null;
+function toggleTour(){
+  tourActive = !tourActive;
+  const btn = document.getElementById('tour-btn');
+  const bar = document.getElementById('tour-bar');
+  if(tourActive){
+    btn.textContent = '■ STOP TOUR';
+    btn.classList.add('active');
+    bar.classList.add('visible');
+    tourIndex = 0;
+    goToTourStop();
+    tourInterval = setInterval(()=>{ tourStep(1); }, 5000);
+  } else {
+    btn.textContent = '▶ GUIDED TOUR';
+    btn.classList.remove('active');
+    bar.classList.remove('visible');
+    clearInterval(tourInterval);
+    closeDetail();
+  }
+}
+
+function tourStep(dir){
+  if(tourInterval) clearInterval(tourInterval);
+  tourIndex = ((tourIndex + dir) % GAMES.length + GAMES.length) % GAMES.length;
+  goToTourStop();
+  if(tourActive) tourInterval = setInterval(()=>{ tourStep(1); }, 5000);
+}
+
+function goToTourStop(){
+  document.getElementById('tour-info').textContent = `Exhibit ${tourIndex+1} / ${GAMES.length}`;
+  flyToExhibit(tourIndex, true);
+}
+
+// ─── SIDEBAR TOGGLE ───────────────────────────────────────────────────────────
+function toggleSidebar(){
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebar').classList.toggle('hidden', !sidebarOpen);
+  document.getElementById('toggle-sidebar-btn').style.opacity = sidebarOpen ? '1' : '0.5';
+}
+
+// ─── MINIMAP ──────────────────────────────────────────────────────────────────
+const minimapCtx = document.getElementById('minimap-canvas').getContext('2d');
+function drawMinimap(){
+  const mc = minimapCtx;
+  mc.clearRect(0,0,110,110);
+  mc.fillStyle='rgba(5,8,22,0.0)';
+  mc.fillRect(0,0,110,110);
+  const scale = 110/120;
+  const ox = 55, oy = 55;
+  GAMES.forEach((g,i)=>{
+    const pos = LAYOUT[i];
+    const mx = ox + pos.x*scale;
+    const my = oy + pos.z*scale;
+    const colorHex = '#'+g.color.toString(16).padStart(6,'0');
+    mc.beginPath();
+    mc.arc(mx, my, 3.5, 0, Math.PI*2);
+    mc.fillStyle = colorHex;
+    mc.fill();
+  });
+  // Camera position
+  const cpx = ox + camTarget.x*scale;
+  const cpy = oy + camTarget.z*scale;
+  mc.beginPath();
+  mc.arc(cpx, cpy, 4, 0, Math.PI*2);
+  mc.fillStyle = 'rgba(255,255,255,0.9)';
+  mc.fill();
+  mc.strokeStyle='rgba(125,211,252,0.8)';
+  mc.lineWidth=1;
+  mc.stroke();
+}
+
+// ─── ANIMATION LOOP ───────────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  updateCamera();
+
+  // Animate orbs
+  exhibitMeshes.forEach((m,i)=>{
+    if(m.geometry.type === 'SphereGeometry'){
+      m.position.y += Math.sin(t*1.5 + i) * 0.003;
+    }
+    if(m.geometry.type === 'BoxGeometry'){
+      m.rotation.y = t * 0.15 + i * 0.4;
+    }
+  });
+
+  drawMinimap();
+  renderer.render(scene, camera);
+}
+
+// ─── RESIZE ───────────────────────────────────────────────────────────────────
+window.addEventListener('resize', ()=>{
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildSidebar();
+animate();
+setTimeout(()=>{ document.getElementById('loading').classList.add('done'); }, 1800);
+</script>
+</body>
+</html>
