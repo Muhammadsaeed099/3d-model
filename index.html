@@ -348,12 +348,12 @@
   </div>
 
   <div id="nav" class="panel">
-    <button onclick="step(-1)" title="Move to the previous ranked exhibit (toward #1)">◀ Prev</button>
+    <button onclick="goToPrevRank()" title="Move to the previous ranked exhibit (toward #1)">◀ Prev</button>
     <span class="sep"></span>
     <button class="play" id="play-btn" onclick="toggleTour()">▶ Tour</button>
     <span id="nav-info">Click any podium</span>
     <span class="sep"></span>
-    <button onclick="step(1)" title="Move to the next ranked exhibit">Next ▶</button>
+    <button onclick="goToNextRank()" title="Move to the next ranked exhibit (higher rank number)">Next ▶</button>
     <span class="sep"></span>
     <span class="jump-wrap">
       <span class="jl">Jump to #</span>
@@ -365,8 +365,8 @@
   <div id="mini" class="panel"><span class="ml">Gallery map</span><canvas id="mini-c" width="300" height="116"></canvas></div>
 
   <div id="hint">
-    <div class="h"><b>Drag</b> orbit · <b>Scroll</b> zoom · <b>Right-drag</b> pan</div>
-    <div class="h"><b>WASD</b> walk · <b>Q/E</b> up/down · <b>Click</b> a podium</div>
+    <div class="h"><b>Drag</b> 360° orbit · <b>Scroll</b> zoom · <b>Right-drag</b> pan</div>
+    <div class="h"><b>←/→</b> prev/next rank · <b>WASD</b> walk · <b>Click</b> podium</div>
   </div>
 </div>
 
@@ -401,14 +401,6 @@
       <span class="lg"><span class="sw" style="background:linear-gradient(45deg,#bc002d,#006aa7)"></span>Flag = publisher region</span>
     </div>
 
-    <h3>Editing the data</h3>
-    <p>This is one self-contained HTML file. The game list lives in two places, in priority order:</p>
-    <ul>
-      <li><b>External JSON file</b> — drop a file at <code>data/games.json</code> next to this HTML (same record shape). The page fetches it on load and uses it if found.</li>
-      <li><b>Embedded JSON block</b> — the <code>&lt;script type="application/json" id="games-data"&gt;</code> block at the top of this file is the fallback. Edit a row in place, reload, and the gallery rebuilds itself — layout, podium heights, badges, filters, tour and panels all derive from the config. No code edits required.</li>
-    </ul>
-    <p>Double-click the HTML to open in Chrome or Firefox — no server, no login, no paid service. The only network fetches are Three.js and the web fonts; for a fully offline build, drop those into the project folder and point to them locally.</p>
-
     <h3>Controls reference</h3>
     <ul>
       <li><b>Drag (left mouse)</b> — orbit the camera; full 360° horizontal, full vertical range (above and below the gallery).</li>
@@ -439,13 +431,31 @@ async function loadGames(){
     const r = await fetch('data/games.json', {cache:'no-store'});
     if(r.ok){
       const j = await r.json();
-      if(Array.isArray(j) && j.length){ console.info('[museum] loaded data/games.json'); return j; }
+      if(Array.isArray(j) && j.length){ console.info('[museum] loaded data/games.json'); return normalizeGames(j); }
     }
   }catch(e){ /* falls through to embedded */ }
   // 2) Fall back to embedded
   const node = document.getElementById('games-data');
-  return JSON.parse(node.textContent);
+  return normalizeGames(JSON.parse(node.textContent));
 }
+
+/** Sort by rank and re-index gallery slots so nav always follows rank #1 … #N. */
+function normalizeGames(arr){
+  const games = arr.map((g,i)=>({
+    ...g,
+    rank: Math.max(1, parseInt(g.rank, 10) || (i + 1)),
+    sales: Number(g.sales) || 0
+  }));
+  games.sort((a,b)=>a.rank - b.rank);
+  games.forEach((g,i)=>{ g.rank = i + 1; });
+  return games;
+}
+
+function indexForRank(rank){
+  return GAMES.findIndex(g=>g.rank===rank);
+}
+function maxRank(){ return GAMES.length ? GAMES[GAMES.length-1].rank : 0; }
+function currentRank(){ return currentIndex>=0 ? GAMES[currentIndex].rank : null; }
 
 const REGION_NAME = {JP:"Japan", US:"United States", SE:"Sweden", KR:"South Korea"};
 
@@ -865,10 +875,23 @@ let target=new THREE.Vector3(0,3,0), yaw=-0.5, pitch=0.30, radius=46;
 let dragLeft=false, dragRight=false, pm={x:0,y:0}, keys={}, viewMode='persp';
 let fly=null;
 
-const PITCH_LIMIT = Math.PI/2 - 0.04;   /* keep just shy of poles to avoid lookAt flip */
+const PITCH_LIMIT = Math.PI/2 - 0.015;  /* near-full vertical orbit; tiny margin avoids flip */
 const PITCH_MIN   = -PITCH_LIMIT;
+const ORBIT_SENS  = 0.0065;
+const ZOOM_MIN    = 3;
+const ZOOM_MAX_MUL = 2.4;
 
 let startCam = null;
+
+function cancelFly(){
+  if(fly){ cancelAnimationFrame(fly); fly=null; }
+}
+function userTookCamera(){
+  cancelFly();
+  viewMode='persp';
+  const b=document.getElementById('topbtn');
+  if(b){ b.classList.remove('on'); b.lastChild.textContent=' Top View'; }
+}
 
 function applyCam(){
   const cx=target.x+radius*Math.cos(pitch)*Math.sin(yaw);
@@ -895,7 +918,7 @@ function cycleView(){
 }
 
 function flyTo(s, cb){
-  if(fly)cancelAnimationFrame(fly);
+  cancelFly();
   const s0={tx:target.x,ty:target.y,tz:target.z,yaw,pitch,radius};
   let yEnd=s.yaw; while(yEnd-yaw>Math.PI)yEnd-=2*Math.PI; while(yEnd-yaw<-Math.PI)yEnd+=2*Math.PI;
   const t0=performance.now(), dur=1050;
@@ -917,15 +940,15 @@ function flyToExhibit(i, openPanel){
 /* ── pointer handling: left-drag orbits, right-drag pans ── */
 canvas.addEventListener('contextmenu', e=>e.preventDefault());
 canvas.addEventListener('mousedown',e=>{
-  if(e.button===2){ dragRight=true; }
-  else { dragLeft=true; }
+  if(e.button===2){ dragRight=true; userTookCamera(); }
+  else { dragLeft=true; userTookCamera(); }
   pm={x:e.clientX,y:e.clientY};
 });
 addEventListener('mouseup',()=>{ dragLeft=false; dragRight=false; });
 canvas.addEventListener('mousemove',e=>{
   if(dragLeft){
-    yaw -= (e.clientX-pm.x)*0.005;                                   /* full 360° */
-    pitch = Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch - (e.clientY-pm.y)*0.005));
+    yaw -= (e.clientX-pm.x)*ORBIT_SENS;                              /* full 360° yaw */
+    pitch = Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch - (e.clientY-pm.y)*ORBIT_SENS));
     pm={x:e.clientX,y:e.clientY};
   } else if(dragRight){
     /* pan: move target on the camera-relative XZ plane */
@@ -938,21 +961,26 @@ canvas.addEventListener('mousemove',e=>{
   }
 });
 canvas.addEventListener('wheel',e=>{
-  radius=Math.max(4, Math.min(ROW_W*1.6, radius+e.deltaY*0.06));     /* generous zoom range */
+  userTookCamera();
+  const zMax = Math.max(120, (ROW_W||200)*ZOOM_MAX_MUL);
+  radius=Math.max(ZOOM_MIN, Math.min(zMax, radius+e.deltaY*0.07));
   e.preventDefault();
 },{passive:false});
 
 /* touch (single-finger orbit) */
 let lt=null;
-canvas.addEventListener('touchstart',e=>{lt=e.touches[0];},{passive:false});
+canvas.addEventListener('touchstart',e=>{userTookCamera(); lt=e.touches[0];},{passive:false});
 canvas.addEventListener('touchmove',e=>{const t=e.touches[0];
-  yaw -= (t.clientX-lt.clientX)*0.006;
-  pitch = Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch - (t.clientY-lt.clientY)*0.006));
+  yaw -= (t.clientX-lt.clientX)*ORBIT_SENS;
+  pitch = Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch - (t.clientY-lt.clientY)*ORBIT_SENS));
   lt=t;e.preventDefault();},{passive:false});
 
 addEventListener('keydown',e=>{
   if(document.activeElement && document.activeElement.id==='jump-input') return;
-  keys[e.key.toLowerCase()]=true;
+  const k=e.key.toLowerCase();
+  if(e.key==='ArrowLeft'){ e.preventDefault(); goToPrevRank(); return; }
+  if(e.key==='ArrowRight'){ e.preventDefault(); goToNextRank(); return; }
+  keys[k]=true;
 });
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 
@@ -962,8 +990,8 @@ function walk(){
   const rt =new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw)).multiplyScalar(sp);
   if(keys['w']||keys['arrowup'])target.add(fwd);
   if(keys['s']||keys['arrowdown'])target.sub(fwd);
-  if(keys['a']||keys['arrowleft'])target.sub(rt);
-  if(keys['d']||keys['arrowright'])target.add(rt);
+  if(keys['a'])target.sub(rt);
+  if(keys['d'])target.add(rt);
   if(keys['q']) target.y -= sp;
   if(keys['e']) target.y += sp;
   /* very generous bounds so users can roam the whole museum freely */
@@ -1081,23 +1109,26 @@ function flagDetailHTML(r){return flagSwatchHTML(r).replace('r-flag','d-flag');}
 function closeDetail(){document.getElementById('detail').classList.remove('open');setActive(-1);}
 
 /* ════════════════════════════════════════════════════════════════════
-   NAV — Prev / Next / Jump
-   IMPORTANT:
-     - GAMES is rank-ordered: index 0 = rank #1, index N-1 = rank #N.
-     - "Next ranked" goes #1 → #2 → #3 …  → index INCREASES (dir=+1).
-     - "Previous ranked" goes #N → … → #1 → index DECREASES (dir=-1).
-   step(dir) therefore moves currentIndex by exactly +dir, clamped.
+   NAV — Prev / Next / Jump (always by exhibit rank, not array quirks)
+     Prev  → rank number decreases (#6 → #5 → … → #1)
+     Next  → rank number increases   (#1 → #2 → … → #N)
 ════════════════════════════════════════════════════════════════════ */
-function step(dir){
+function goToPrevRank(){
   if(tourActive) stopTour();
-  let i = currentIndex;
-  if(i < 0){
-    /* first press: Next starts at the top of the list (#1); Prev starts at the bottom. */
-    i = (dir > 0) ? 0 : N - 1;
-  } else {
-    i = Math.max(0, Math.min(N - 1, i + dir));
-  }
-  flyToExhibit(i, true);
+  const r = currentRank();
+  if(r==null){ const idx=indexForRank(maxRank()); if(idx>=0) flyToExhibit(idx,true); return; }
+  if(r<=1){ flyToExhibit(indexForRank(1), true); return; }
+  const idx = indexForRank(r - 1);
+  if(idx>=0) flyToExhibit(idx, true);
+}
+function goToNextRank(){
+  if(tourActive) stopTour();
+  const r = currentRank();
+  if(r==null){ flyToExhibit(indexForRank(1), true); return; }
+  const top = maxRank();
+  if(r>=top){ flyToExhibit(indexForRank(top), true); return; }
+  const idx = indexForRank(r + 1);
+  if(idx>=0) flyToExhibit(idx, true);
 }
 function updateNavInfo(i){
   document.getElementById('nav-info').textContent = i>=0? `#${GAMES[i].rank} · ${GAMES[i].title}` : 'Click any podium';
@@ -1105,7 +1136,8 @@ function updateNavInfo(i){
 function jumpToRank(){
   const inp = document.getElementById('jump-input');
   const v = parseInt(inp.value,10);
-  if(isNaN(v) || v<1 || v>N){
+  const top = maxRank();
+  if(isNaN(v) || v<1 || v>top){
     inp.value=''; inp.focus();
     inp.style.borderColor='#e35454';
     setTimeout(()=>{inp.style.borderColor='';},700);
@@ -1113,7 +1145,9 @@ function jumpToRank(){
   }
   inp.value=''; inp.blur();
   if(tourActive) stopTour();
-  flyToExhibit(v-1, true);     /* rank N → index N-1 */
+  const idx = indexForRank(v);
+  if(idx<0) return;
+  flyToExhibit(idx, true);
 }
 function toggleTour(){ tourActive?stopTour():startTour(); }
 function startTour(){
@@ -1122,7 +1156,8 @@ function startTour(){
   document.getElementById('tour-btn').lastChild.textContent=' Stop Tour';
   const pb=document.getElementById('play-btn'); pb.classList.add('on'); pb.textContent='■ Stop';
   /* tour: walk from the bottom of the list up to #1 (the dramatic reveal) */
-  currentIndex = N - 1;
+  currentIndex = indexForRank(maxRank());
+  if(currentIndex<0) currentIndex = N - 1;
   tourGo();
   tourTimer = setInterval(()=>{
     currentIndex = (currentIndex - 1 + N) % N;
@@ -1206,8 +1241,9 @@ addEventListener('resize',()=>{
   ROW_W     = (N-1)*SPACING;
   X0        = -ROW_W/2;
 
-  document.getElementById('jump-input').max = N;
-  document.getElementById('jump-input').placeholder = '1–'+N;
+  const topRank = maxRank();
+  document.getElementById('jump-input').max = topRank;
+  document.getElementById('jump-input').placeholder = '1–'+topRank;
 
   buildSceneFurniture();
   buildExhibits();
