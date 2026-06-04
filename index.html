@@ -89,7 +89,12 @@
   .rk{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;
     justify-content:center;font-family:var(--display);font-weight:800;font-size:12px;
     background:rgba(47,107,240,.12);color:var(--azure);}
-  .row.gold .rk{background:var(--accent);color:#3a2c00;}
+  .row.gold .rk{background:linear-gradient(135deg,#ffd968,#e8a900);color:#3a2c00;
+    box-shadow:0 0 0 1px rgba(232,169,0,0.5);}
+  .row.silver .rk{background:linear-gradient(135deg,#eef1f5,#a8b4c0);color:#1a2030;
+    box-shadow:0 0 0 1px rgba(168,180,192,0.55);}
+  .row.bronze .rk{background:linear-gradient(135deg,#e6b282,#a8682f);color:#fff;
+    box-shadow:0 0 0 1px rgba(168,104,47,0.5);}
   .r-info{flex:1;min-width:0;}
   .r-name{font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .r-sub{font-size:10.5px;color:var(--ink-soft);margin-top:1px;display:flex;gap:6px;align-items:center;}
@@ -127,10 +132,18 @@
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
   .tag{font-size:10px;font-weight:600;color:var(--azure);background:rgba(47,107,240,.1);
     border:1px solid rgba(47,107,240,.2);border-radius:20px;padding:3px 10px;}
-  .d-note{font-size:12.5px;line-height:1.65;color:var(--ink-soft);}
-  .d-caveat{margin-top:12px;font-size:11.5px;line-height:1.55;color:#8a5a00;
-    background:rgba(255,206,31,.14);border:1px solid rgba(255,206,31,.4);border-radius:10px;padding:9px 11px;}
-  .d-caveat b{color:#7a4f00;}
+  .d-note{font-size:12.5px;line-height:1.65;color:var(--ink-soft);margin-bottom:6px;}
+  .d-note-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);
+    font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+  .d-note-label::before{content:"";width:14px;height:1px;background:var(--azure);display:inline-block;}
+  .d-caveat{margin-top:14px;font-size:11.5px;line-height:1.55;color:#8a5a00;
+    background:rgba(255,206,31,.14);border:1px solid rgba(255,206,31,.4);border-radius:10px;padding:10px 12px;
+    display:flex;gap:9px;}
+  .d-caveat b{color:#7a4f00;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;}
+  .d-caveat .ic{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#e8a900;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;font-family:var(--display);}
+  .d-caveat .cv-body{flex:1;}
+  .d-caveat .cv-body div:first-child{margin-bottom:3px;}
 
   /* Bottom nav */
   #nav{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
@@ -144,6 +157,17 @@
   #nav .play.on{background:#e35454;}
   #nav-info{font-size:11.5px;color:var(--ink-soft);min-width:128px;text-align:center;font-weight:600;}
   #nav .sep{width:1px;height:20px;background:var(--line);}
+  /* Jump-to-rank */
+  .jump-wrap{display:flex;align-items:center;gap:6px;padding:0 4px;}
+  .jump-wrap .jl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-soft);}
+  #jump-input{width:48px;height:30px;border:1px solid var(--line);border-radius:9px;
+    background:rgba(255,255,255,0.7);color:var(--ink);font-family:var(--display);font-weight:800;
+    font-size:13px;text-align:center;padding:0 4px;outline:none;transition:border-color .15s;}
+  #jump-input:focus{border-color:var(--azure);background:#fff;}
+  #jump-input::-webkit-outer-spin-button,#jump-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  #jump-input{-moz-appearance:textfield;}
+  #jump-go{background:var(--accent)!important;color:#3a2c00!important;font-weight:700;}
+  #jump-go:hover{background:var(--accent-deep)!important;color:#3a2c00!important;}
 
   /* Minimap */
   #mini{position:absolute;right:18px;bottom:96px;width:150px;height:58px;border-radius:12px;
@@ -162,13 +186,15 @@
   #method{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;
     background:rgba(13,36,64,.4);backdrop-filter:blur(4px);pointer-events:all;padding:20px;}
   #method.open{display:flex;}
-  .mcard{max-width:560px;width:100%;max-height:84vh;overflow-y:auto;border-radius:20px;
+  .mcard{max-width:580px;width:100%;max-height:84vh;overflow-y:auto;border-radius:20px;
     background:var(--glass-strong);border:1px solid var(--line);box-shadow:var(--shadow);padding:30px 30px 26px;}
   .mcard h2{font-family:var(--display);font-weight:800;font-size:22px;margin-bottom:4px;}
   .mcard .sub{color:var(--ink-soft);font-size:13px;margin-bottom:20px;}
   .mcard h3{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.5px;
     margin:18px 0 7px;color:var(--azure);}
   .mcard p{font-size:13px;line-height:1.65;color:var(--ink-soft);}
+  .mcard code{background:rgba(47,107,240,.1);color:var(--azure);padding:1px 6px;border-radius:4px;
+    font-family:'SF Mono',Menlo,monospace;font-size:11.5px;}
   .mcard ul{margin:6px 0 0 2px;list-style:none;}
   .mcard li{font-size:12.5px;line-height:1.6;color:var(--ink-soft);padding-left:18px;position:relative;margin-bottom:4px;}
   .mcard li::before{content:"";position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:2px;background:var(--accent);}
@@ -179,6 +205,13 @@
   .lg{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-soft);
     background:rgba(47,107,240,.06);border:1px solid var(--line-soft);border-radius:10px;padding:6px 10px;}
   .lg .sw{width:14px;height:14px;border-radius:4px;}
+  .lg .swm{width:16px;height:16px;border-radius:50%;}
+  .source-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.8px;
+    text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:6px;}
+  .st-sourced{background:rgba(34,139,82,.12);color:#1a7340;border:1px solid rgba(34,139,82,.3);}
+  .st-derived{background:rgba(47,107,240,.12);color:var(--azure);border:1px solid rgba(47,107,240,.3);}
+  .st-invented{background:rgba(232,169,0,.16);color:#8a5a00;border:1px solid rgba(232,169,0,.4);}
+  .st-rounded{background:rgba(124,45,45,.12);color:#7c2d2d;border:1px solid rgba(124,45,45,.3);}
 
   /* Loading */
   #load{position:fixed;inset:0;z-index:100;background:linear-gradient(180deg,var(--sky-top),var(--sky-bot));
@@ -199,6 +232,64 @@
 </style>
 </head>
 <body>
+
+<!-- ════════════════════════════════════════════════════════════════════════════
+     CONFIG: single source of truth.
+     Sales = approximate lifetime units sold, in MILLIONS, rounded (see Methodology).
+     This script tag is the embedded config. The page also tries to fetch
+     `data/games.json` on load — if you drop a file at data/games.json next to
+     this HTML, it will be used instead. Either way, layout, filters, badges,
+     tour and panels rebuild themselves on reload, no code edits required.
+     ════════════════════════════════════════════════════════════════════════════ -->
+<script type="application/json" id="games-data">
+[
+  {"rank":1,"title":"Minecraft","sales":300,"publisher":"Mojang Studios","region":"SE","platform":"Multi","era":"2011","genre":"Sandbox","color":"#4caf50",
+   "note":"The best-selling video game of all time. Players build and explore endless procedurally generated worlds; longevity across every platform keeps the number climbing.",
+   "caveat":"Counts all editions across all platforms combined."},
+  {"rank":2,"title":"Grand Theft Auto V","sales":205,"publisher":"Rockstar Games","region":"US","platform":"Multi","era":"2013","genre":"Action","color":"#f97316",
+   "note":"Rockstar's open-world juggernaut, sustained for a decade by GTA Online and re-releases across three console generations.",
+   "caveat":null},
+  {"rank":3,"title":"Tetris (EA Mobile)","sales":100,"publisher":"Electronic Arts","region":"US","platform":"Mobile","era":"2006","genre":"Puzzle","color":"#a855f7",
+   "note":"The mobile-era resurgence of the block-stacking classic, bundled across feature phones during the casual-gaming boom.",
+   "caveat":"This is the EA mobile edition only — not every Tetris version ever made combined."},
+  {"rank":4,"title":"Wii Sports","sales":83,"publisher":"Nintendo","region":"JP","platform":"Wii","era":"2006","genre":"Sports","color":"#fbbf24",
+   "note":"The motion-control showcase that put a Wii in living rooms worldwide and made gamers of non-gamers.",
+   "caveat":"Largely a pack-in title bundled with the console in most regions."},
+  {"rank":5,"title":"PUBG: Battlegrounds","sales":75,"publisher":"PUBG Studios","region":"KR","platform":"Multi","era":"2017","genre":"Battle Royale","color":"#ef4444",
+   "note":"PlayerUnknown's Battlegrounds defined the modern battle-royale and ignited a genre that reshaped online play.",
+   "caveat":"Boxed PC / console sales; excludes the separate free-to-play mobile version."},
+  {"rank":6,"title":"Mario Kart 8 Deluxe","sales":67,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2017","genre":"Racing","color":"#38bdf8",
+   "note":"The definitive kart racer, riding the Switch's enormous install base plus a steady stream of track DLC.",
+   "caveat":null},
+  {"rank":7,"title":"Red Dead Redemption 2","sales":64,"publisher":"Rockstar Games","region":"US","platform":"Multi","era":"2018","genre":"Action","color":"#7c2d2d",
+   "note":"A sprawling, detail-obsessed open-world Western widely praised for its storytelling and simulation depth.",
+   "caveat":null},
+  {"rank":8,"title":"Super Mario Bros.","sales":58,"publisher":"Nintendo","region":"JP","platform":"NES","era":"1985","genre":"Platformer","color":"#dc2626",
+   "note":"The blockbuster that rescued home consoles in the West and wrote the rulebook for the platformer.",
+   "caveat":null},
+  {"rank":9,"title":"Terraria","sales":50,"publisher":"Re-Logic","region":"US","platform":"Multi","era":"2011","genre":"Sandbox","color":"#22c55e",
+   "note":"A 2D sandbox-survival adventure with surprising depth that has sold steadily for over a decade.",
+   "caveat":null},
+  {"rank":10,"title":"Pokémon Red / Green / Blue","sales":47,"publisher":"Game Freak","region":"JP","platform":"Game Boy","era":"1996","genre":"RPG","color":"#facc15",
+   "note":"The first-generation games that launched one of the most valuable media franchises ever created.",
+   "caveat":"Combined sales of the original Gen-1 releases (incl. Yellow)."},
+  {"rank":11,"title":"Animal Crossing: New Horizons","sales":46,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2020","genre":"Simulation","color":"#34d399",
+   "note":"The pandemic-era comfort hit — a gentle island life-sim that became a cultural moment in 2020.",
+   "caveat":null},
+  {"rank":12,"title":"Wii Fit + Wii Fit Plus","sales":43,"publisher":"Nintendo","region":"JP","platform":"Wii","era":"2007","genre":"Fitness","color":"#06b6d4",
+   "note":"The Balance-Board fitness phenomenon that turned the living room into a gym.",
+   "caveat":"Combined sales of Wii Fit and the Wii Fit Plus revision."},
+  {"rank":13,"title":"The Elder Scrolls V: Skyrim","sales":41,"publisher":"Bethesda","region":"US","platform":"Multi","era":"2011","genre":"RPG","color":"#94a3b8",
+   "note":"The open-world RPG that keeps being re-released — and keeps selling — across every generation of hardware.",
+   "caveat":"Estimate spanning all editions and re-releases."},
+  {"rank":14,"title":"Call of Duty: Black Ops III","sales":40,"publisher":"Activision","region":"US","platform":"Multi","era":"2015","genre":"Shooter","color":"#d97706",
+   "note":"One of the best-selling entries in the annual shooter behemoth, spanning current and previous-gen consoles.",
+   "caveat":null},
+  {"rank":15,"title":"Super Smash Bros. Ultimate","sales":36,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2018","genre":"Fighting","color":"#9333ea",
+   "note":"The crossover fighting celebration packing in nearly every character from gaming history.",
+   "caveat":null}
+]
+</script>
 
 <div id="load">
   <div class="badge">Interactive 3D Data Museum</div>
@@ -263,6 +354,12 @@
     <span id="nav-info">Click any podium</span>
     <span class="sep"></span>
     <button onclick="step(1)" title="Toward #1">Next ▶</button>
+    <span class="sep"></span>
+    <span class="jump-wrap">
+      <span class="jl">Jump to #</span>
+      <input type="number" id="jump-input" min="1" placeholder="—" onkeydown="if(event.key==='Enter')jumpToRank()">
+      <button id="jump-go" onclick="jumpToRank()">Go</button>
+    </span>
   </div>
 
   <div id="mini" class="panel"><span class="ml">Gallery map</span><canvas id="mini-c" width="300" height="116"></canvas></div>
@@ -276,29 +373,41 @@
 <div id="method">
   <div class="mcard">
     <h2>Methodology &amp; honesty note</h2>
-    <div class="sub">What's sourced, what's rounded, and what's invented — so nothing here pretends to be more precise than it is.</div>
+    <div class="sub">What's sourced, what's rounded, what's derived, and what's invented — so nothing here pretends to be more precise than it is.</div>
 
     <h3>About the numbers</h3>
-    <p>Sales figures are <b>approximate lifetime units sold, rounded to the nearest million</b>, compiled from publicly reported publisher figures and aggregated sales trackers. These numbers drift upward as catalogue titles keep selling, so treat them as a ballpark snapshot (cutoff around 2024–2025), not an audited ledger. Strict ranking order is preserved with no ties.</p>
+    <p>Sales figures are <b>approximate lifetime units sold, rounded to the nearest million</b>, compiled from publicly reported publisher figures and aggregated sales trackers. Catalogue titles keep selling, so these are a ballpark snapshot (cutoff around 2024–2025) rather than an audited ledger. Strict ranking order is preserved with no ties.</p>
 
-    <h3>Sourced vs invented</h3>
+    <h3>What's what — provenance of every element</h3>
     <ul>
-      <li><b>Sales &amp; ranking</b> — sourced and rounded from public reporting.</li>
-      <li><b>Cover cards</b> — original stylised illustration generated in-app. These are <b>not</b> official box art or scans; they're abstract placeholders so the project ships clean of copyrighted artwork.</li>
-      <li><b>Flags</b> — decorative cue for the publisher's home region, drawn procedurally.</li>
-      <li><b>Podium height</b> — scaled linearly to the sales number.</li>
-      <li>Per-title caveats (bundling, edition scope, etc.) appear in each exhibit's detail panel.</li>
+      <li><span class="source-tag st-sourced">Sourced</span><b>Sales &amp; ranking</b> — from public reporting (publisher statements, annual reports, aggregate trackers).</li>
+      <li><span class="source-tag st-rounded">Rounded</span><b>Sales numbers</b> — rounded to the nearest million; treat exact figures as approximate.</li>
+      <li><span class="source-tag st-derived">Derived</span><b>Podium height</b> — scaled linearly to the sales number. Tallest podium = #1.</li>
+      <li><span class="source-tag st-derived">Derived</span><b>"Share of #1" bar</b> in the detail panel — computed live from this dataset.</li>
+      <li><span class="source-tag st-invented">Invented</span><b>Cover cards</b> — original stylised illustration generated procedurally in-app. These are <b>not</b> official box art or scans; they're abstract placeholders so the project ships clean of copyrighted artwork.</li>
+      <li><span class="source-tag st-invented">Invented</span><b>Flag art</b> — drawn procedurally on canvas as a decorative cue for the publisher's home region. Not official heraldry.</li>
+      <li><span class="source-tag st-invented">Invented</span><b>Trees, fence, banner, lighting</b> — purely scenographic, no data meaning.</li>
+      <li>Per-title caveats (bundling, edition scope, etc.) appear in each exhibit's detail panel where applicable.</li>
     </ul>
 
     <h3>Legend</h3>
     <div class="legend">
       <span class="lg"><span class="sw" style="background:#2f6bf0"></span>Podium height = units sold</span>
       <span class="lg"><span class="sw" style="background:#ffce1f"></span>Yellow number = lifetime sales (M)</span>
+      <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#ffd968,#e8a900)"></span>Gold medallion = #1</span>
+      <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#eef1f5,#a8b4c0)"></span>Silver = #2</span>
+      <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#e6b282,#a8682f)"></span>Bronze = #3</span>
+      <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#5a8fff,#1f50d4)"></span>Navy = #4 →</span>
       <span class="lg"><span class="sw" style="background:linear-gradient(45deg,#bc002d,#006aa7)"></span>Flag = publisher region</span>
     </div>
 
-    <h3>Running it locally</h3>
-    <p>This is one self-contained HTML file — double-click to open in current Chrome or Firefox, no server, login, or paid service. The only network fetches are Three.js and the web fonts; for a fully offline build, drop those into the project folder and point to them locally. To <b>swap any game</b>, edit the <code>GAMES</code> list at the top of the script (it mirrors a <code>data/games.json</code> record shape) and reload — the layout, filters, tour, and panels rebuild themselves automatically.</p>
+    <h3>Editing the data</h3>
+    <p>This is one self-contained HTML file. The game list lives in two places, in priority order:</p>
+    <ul>
+      <li><b>External JSON file</b> — drop a file at <code>data/games.json</code> next to this HTML (same record shape). The page fetches it on load and uses it if found.</li>
+      <li><b>Embedded JSON block</b> — the <code>&lt;script type="application/json" id="games-data"&gt;</code> block at the top of this file is the fallback. Edit a row in place, reload, and the gallery rebuilds itself — layout, podium heights, badges, filters, tour and panels all derive from the config. No code edits required.</li>
+    </ul>
+    <p>Double-click the HTML to open in Chrome or Firefox — no server, no login, no paid service. The only network fetches are Three.js and the web fonts; for a fully offline build, drop those into the project folder and point to them locally.</p>
 
     <button class="close" onclick="closeMethod()">Got it</button>
   </div>
@@ -307,70 +416,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* ════════════════════════════════════════════════════════════════════════════
-   EDITABLE GAME LIST  —  this is the single source of truth.
-   Mirrors a data/games.json record shape. Change a row, reload the page, and the
-   whole scene (layout, podium heights, filters, tour, details) adapts. No other
-   edits needed. `cover` is optional: leave it null to auto-generate a stylised
-   card, or set a relative image path (e.g. "assets/minecraft.png") to use art.
-   Sales = approximate lifetime units in MILLIONS (rounded; see Methodology).
+   CONFIG LOADER
+   1) Try data/games.json (external file).
+   2) Fall back to the embedded <script type="application/json"> block.
+   The rest of the app treats the result identically.
 ════════════════════════════════════════════════════════════════════════════ */
-const GAMES = [
-  {rank:1,  title:"Minecraft",                    sales:300, publisher:"Mojang Studios",  region:"SE", platform:"Multi",     era:"2011", genre:"Sandbox",       color:"#4caf50", cover:null,
-    note:"The best-selling video game of all time. Players build and explore endless procedurally generated worlds; longevity across every platform keeps the number climbing.",
-    caveat:"Counts all editions across all platforms combined."},
-  {rank:2,  title:"Grand Theft Auto V",           sales:205, publisher:"Rockstar Games",  region:"US", platform:"Multi",     era:"2013", genre:"Action",        color:"#f97316", cover:null,
-    note:"Rockstar's open-world juggernaut, sustained for a decade by GTA Online and re-releases across three console generations.",
-    caveat:null},
-  {rank:3,  title:"Tetris (EA Mobile)",           sales:100, publisher:"Electronic Arts", region:"US", platform:"Mobile",    era:"2006", genre:"Puzzle",        color:"#a855f7", cover:null,
-    note:"The mobile-era resurgence of the block-stacking classic, bundled across feature phones during the casual-gaming boom.",
-    caveat:"This is the EA mobile edition only — not every Tetris version ever made combined."},
-  {rank:4,  title:"Wii Sports",                   sales:83,  publisher:"Nintendo",        region:"JP", platform:"Wii",       era:"2006", genre:"Sports",        color:"#fbbf24", cover:null,
-    note:"The motion-control showcase that put a Wii in living rooms worldwide and made gamers of non-gamers.",
-    caveat:"Largely a pack-in title bundled with the console in most regions."},
-  {rank:5,  title:"PUBG: Battlegrounds",          sales:75,  publisher:"PUBG Studios",    region:"KR", platform:"Multi",     era:"2017", genre:"Battle Royale", color:"#ef4444", cover:null,
-    note:"PlayerUnknown's Battlegrounds defined the modern battle-royale and ignited a genre that reshaped online play.",
-    caveat:"Boxed PC / console sales; excludes the separate free-to-play mobile version."},
-  {rank:6,  title:"Mario Kart 8 Deluxe",          sales:67,  publisher:"Nintendo",        region:"JP", platform:"Switch",    era:"2017", genre:"Racing",        color:"#38bdf8", cover:null,
-    note:"The definitive kart racer, riding the Switch's enormous install base plus a steady stream of track DLC.",
-    caveat:null},
-  {rank:7,  title:"Red Dead Redemption 2",        sales:64,  publisher:"Rockstar Games",  region:"US", platform:"Multi",     era:"2018", genre:"Action",        color:"#7c2d2d", cover:null,
-    note:"A sprawling, detail-obsessed open-world Western widely praised for its storytelling and simulation depth.",
-    caveat:null},
-  {rank:8,  title:"Super Mario Bros.",            sales:58,  publisher:"Nintendo",        region:"JP", platform:"NES",       era:"1985", genre:"Platformer",    color:"#dc2626", cover:null,
-    note:"The blockbuster that rescued home consoles in the West and wrote the rulebook for the platformer.",
-    caveat:null},
-  {rank:9,  title:"Terraria",                     sales:50,  publisher:"Re-Logic",        region:"US", platform:"Multi",     era:"2011", genre:"Sandbox",       color:"#22c55e", cover:null,
-    note:"A 2D sandbox-survival adventure with surprising depth that has sold steadily for over a decade.",
-    caveat:null},
-  {rank:10, title:"Pokémon Red / Green / Blue",   sales:47,  publisher:"Game Freak",      region:"JP", platform:"Game Boy",  era:"1996", genre:"RPG",           color:"#facc15", cover:null,
-    note:"The first-generation games that launched one of the most valuable media franchises ever created.",
-    caveat:"Combined sales of the original Gen-1 releases (incl. Yellow)."},
-  {rank:11, title:"Animal Crossing: New Horizons",sales:46,  publisher:"Nintendo",        region:"JP", platform:"Switch",    era:"2020", genre:"Simulation",    color:"#34d399", cover:null,
-    note:"The pandemic-era comfort hit — a gentle island life-sim that became a cultural moment in 2020.",
-    caveat:null},
-  {rank:12, title:"Wii Fit + Wii Fit Plus",       sales:43,  publisher:"Nintendo",        region:"JP", platform:"Wii",       era:"2007", genre:"Fitness",       color:"#06b6d4", cover:null,
-    note:"The Balance-Board fitness phenomenon that turned the living room into a gym.",
-    caveat:"Combined sales of Wii Fit and the Wii Fit Plus revision."},
-  {rank:13, title:"The Elder Scrolls V: Skyrim",  sales:41,  publisher:"Bethesda",        region:"US", platform:"Multi",     era:"2011", genre:"RPG",           color:"#94a3b8", cover:null,
-    note:"The open-world RPG that keeps being re-released — and keeps selling — across every generation of hardware.",
-    caveat:"Estimate spanning all editions and re-releases."},
-  {rank:14, title:"Call of Duty: Black Ops III",  sales:40,  publisher:"Activision",      region:"US", platform:"Multi",     era:"2015", genre:"Shooter",       color:"#d97706", cover:null,
-    note:"One of the best-selling entries in the annual shooter behemoth, spanning current and previous-gen consoles.",
-    caveat:null},
-  {rank:15, title:"Super Smash Bros. Ultimate",   sales:36,  publisher:"Nintendo",        region:"JP", platform:"Switch",    era:"2018", genre:"Fighting",      color:"#9333ea", cover:null,
-    note:"The crossover fighting celebration packing in nearly every character from gaming history.",
-    caveat:null},
-];
+async function loadGames(){
+  // 1) Try external JSON file
+  try{
+    const r = await fetch('data/games.json', {cache:'no-store'});
+    if(r.ok){
+      const j = await r.json();
+      if(Array.isArray(j) && j.length){ console.info('[museum] loaded data/games.json'); return j; }
+    }
+  }catch(e){ /* falls through to embedded */ }
+  // 2) Fall back to embedded
+  const node = document.getElementById('games-data');
+  return JSON.parse(node.textContent);
+}
 
 const REGION_NAME = {JP:"Japan", US:"United States", SE:"Sweden", KR:"South Korea"};
 
-/* derive filter sets + scale straight from the config */
-const REGIONS   = [...new Set(GAMES.map(g=>g.region))];
-const PLATFORMS = [...new Set(GAMES.map(g=>g.platform))];
-const GENRES    = [...new Set(GAMES.map(g=>g.genre))];
-const MAX_SALES = Math.max(...GAMES.map(g=>g.sales));
-const N = GAMES.length;
-
+/* runtime state set after data loads */
+let GAMES, REGIONS, PLATFORMS, GENRES, MAX_SALES, N, ROW_W, X0;
+const SPACING = 11;                          /* widened from 9 → 11 for breathing room */
+function posX(i){ return X0 + i*SPACING; }
 let filters = {region:"All", platform:"All", genre:"All"};
 let currentIndex = -1;
 let tourActive = false, tourTimer = null;
@@ -397,10 +467,10 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 1.08;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xdcefff, 60, 230);
+scene.fog = new THREE.Fog(0xdcefff, 70, 260);
 
 const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 600);
 
@@ -414,24 +484,20 @@ const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 600)
   scene.background=t;
 })();
 
-/* ── lighting ── */
-const hemi = new THREE.HemisphereLight(0xddeeff, 0x6f8a5a, 0.95); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xfff4e0, 1.35);
-sun.position.set(46, 64, 34); sun.castShadow = true;
+/* ── lighting (slightly warmer + a little more contrast) ── */
+const hemi = new THREE.HemisphereLight(0xddeeff, 0x6f8a5a, 0.9); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff0d6, 1.45);
+sun.position.set(46, 70, 30); sun.castShadow = true;
 sun.shadow.mapSize.set(2048,2048);
-sun.shadow.camera.near=1; sun.shadow.camera.far=320;
-const SH=150; sun.shadow.camera.left=-SH; sun.shadow.camera.right=SH;
+sun.shadow.camera.near=1; sun.shadow.camera.far=340;
+const SH=170; sun.shadow.camera.left=-SH; sun.shadow.camera.right=SH;
 sun.shadow.camera.top=SH; sun.shadow.camera.bottom=-SH;
 sun.shadow.bias=-0.0004; sun.shadow.normalBias=0.02;
 scene.add(sun);
-scene.add(new THREE.AmbientLight(0xffffff,0.18));
-
-/* ════════════════════════ LAYOUT ════════════════════════ */
-const SPACING = 9;
-const ROW_W   = (N-1)*SPACING;
-const X0      = -ROW_W/2;                 // rank 1 at far -X
-function posX(i){ return X0 + i*SPACING; } // i = index (rank-1)
-const ROW_CENTER = 0;
+scene.add(new THREE.AmbientLight(0xffffff,0.2));
+/* fill light from the front-left so cover cards & badges read clearly */
+const fill = new THREE.DirectionalLight(0xbcd4ff, 0.35);
+fill.position.set(-30,18,40); scene.add(fill);
 
 /* ════════════════════════ TEXTURE FACTORIES ════════════════════════ */
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
@@ -439,30 +505,32 @@ function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w
 function shade(hex,f){const c=new THREE.Color(hex);c.multiplyScalar(f);return '#'+c.getHexString();}
 function tex(c){const t=new THREE.CanvasTexture(c);t.anisotropy=8;t.encoding=THREE.sRGBEncoding;t.needsUpdate=true;return t;}
 
-/* podium front decal: nameplate + big yellow sales + rank, transparent bg */
+/* podium front decal: nameplate + big yellow sales (rank now lives on the
+   floating medallion above, so we no longer cram it into the decal) */
 function podiumDecal(g){
   const W=512,H=560,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   // nameplate
-  const padX=22, plateY=14, plateW=W-padX*2, plateH=150;
-  x.fillStyle='rgba(255,255,255,0.94)'; rr(x,padX,plateY,plateW,plateH,26); x.fill();
+  const padX=22, plateY=22, plateW=W-padX*2, plateH=170;
+  x.fillStyle='rgba(255,255,255,0.95)'; rr(x,padX,plateY,plateW,plateH,28); x.fill();
+  // thin azure rule under nameplate
+  x.fillStyle='rgba(47,107,240,0.35)'; x.fillRect(padX+24, plateY+plateH-3, plateW-48, 2);
   x.fillStyle='#0d2440'; x.textAlign='center'; x.textBaseline='middle';
   // fit title to up to 2 lines
-  const words=g.title.split(' '); let fs=46;
+  const words=g.title.split(' '); let fs=52;
   function lines(size){ x.font=`700 ${size}px 'Hanken Grotesk',sans-serif`; const L=[];let cur='';
     for(const w of words){const t=cur?cur+' '+w:w; if(x.measureText(t).width>plateW-44&&cur){L.push(cur);cur=w;}else cur=t;} if(cur)L.push(cur); return L;}
-  let L=lines(fs); while((L.length>2||L.some(s=>{x.font=`700 ${fs}px 'Hanken Grotesk',sans-serif`;return x.measureText(s).width>plateW-44;}))&&fs>26){fs-=2;L=lines(fs);} 
+  let L=lines(fs); while((L.length>2||L.some(s=>{x.font=`700 ${fs}px 'Hanken Grotesk',sans-serif`;return x.measureText(s).width>plateW-44;}))&&fs>26){fs-=2;L=lines(fs);}
   L=L.slice(0,2); x.font=`700 ${fs}px 'Hanken Grotesk',sans-serif`;
   const lh=fs*1.12, cy=plateY+plateH/2 - (L.length-1)*lh/2;
   L.forEach((s,i)=>x.fillText(s, W/2, cy+i*lh));
-  // big sales number
-  x.font=`800 132px 'Bricolage Grotesque',sans-serif`; x.textAlign='center';
-  x.lineWidth=12; x.strokeStyle='rgba(13,36,64,0.55)'; x.lineJoin='round';
-  const sy=plateY+plateH+150; x.strokeText(g.sales+'M', W/2, sy);
+  // little "lifetime sales" caption
+  x.font=`700 18px 'Hanken Grotesk',sans-serif`; x.fillStyle='rgba(13,36,64,0.55)';
+  x.fillText('LIFETIME UNITS SOLD', W/2, plateY+plateH+58);
+  // big sales number, more prominent now
+  x.font=`800 156px 'Bricolage Grotesque',sans-serif`; x.textAlign='center';
+  x.lineWidth=14; x.strokeStyle='rgba(13,36,64,0.6)'; x.lineJoin='round';
+  const sy=plateY+plateH+200; x.strokeText(g.sales+'M', W/2, sy);
   x.fillStyle='#ffd21f'; x.fillText(g.sales+'M', W/2, sy);
-  // rank
-  x.font=`800 60px 'Bricolage Grotesque',sans-serif`;
-  x.lineWidth=9; x.strokeStyle='rgba(13,36,64,0.5)'; x.strokeText('#'+g.rank, W/2, sy+118);
-  x.fillStyle='#ffffff'; x.fillText('#'+g.rank, W/2, sy+118);
   return tex(c);
 }
 
@@ -501,6 +569,127 @@ function coverCard(g){
   return tex(c);
 }
 
+/* ── FLOATING RANK MEDALLION ──────────────────────────────────────────────
+   The big visible element above each exhibit. Visible from across the
+   gallery, billboarded to always face the camera. Top 3 get medal colours,
+   rest get a clean navy badge. */
+function rankBadgeTexture(rank){
+  const W=512,H=512,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.clearRect(0,0,W,H);
+  // colour palette per rank
+  let outer, inner, ringDark, txt, glow, label;
+  if(rank===1){       outer='#fff4a8'; inner='#e8a900'; ringDark='#a87800'; txt='#3a2c00';
+                      glow='rgba(255,206,31,0.55)'; label='GOLD'; }
+  else if(rank===2){  outer='#f3f6fa'; inner='#a8b4c0'; ringDark='#5e6e80'; txt='#1a2030';
+                      glow='rgba(180,195,210,0.45)'; label='SILVER'; }
+  else if(rank===3){  outer='#f0c891'; inner='#a8682f'; ringDark='#6b3f15'; txt='#3a1f08';
+                      glow='rgba(184,122,58,0.45)'; label='BRONZE'; }
+  else {              outer='#5a8fff'; inner='#1f50d4'; ringDark='#0a2d96'; txt='#ffffff';
+                      glow='rgba(47,107,240,0.35)'; label=null; }
+  const cx=W/2, cy=H/2;
+
+  // ambient soft glow halo
+  const halo=x.createRadialGradient(cx,cy,90,cx,cy,W/2);
+  halo.addColorStop(0,glow); halo.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=halo; x.fillRect(0,0,W,H);
+
+  // outer dark ring (gives it weight)
+  x.fillStyle=ringDark;
+  x.beginPath(); x.arc(cx,cy,182,0,Math.PI*2); x.fill();
+
+  // main medallion fill (with directional shading)
+  const grad=x.createRadialGradient(cx-50,cy-60, 30, cx, cy, 175);
+  grad.addColorStop(0, outer); grad.addColorStop(1, inner);
+  x.fillStyle=grad;
+  x.beginPath(); x.arc(cx,cy,168,0,Math.PI*2); x.fill();
+
+  // inner ring engraving
+  x.strokeStyle='rgba(255,255,255,0.55)'; x.lineWidth=3;
+  x.beginPath(); x.arc(cx,cy,150,0,Math.PI*2); x.stroke();
+  x.strokeStyle=ringDark; x.globalAlpha=0.35; x.lineWidth=2;
+  x.beginPath(); x.arc(cx,cy,140,0,Math.PI*2); x.stroke();
+  x.globalAlpha=1;
+
+  // top-arc text — for non-medal ranks, label as "RANK"
+  const arcText = label || 'RANK';
+  x.fillStyle=txt; x.textAlign='center'; x.textBaseline='middle';
+  x.font=`800 26px 'Bricolage Grotesque',sans-serif`;
+  // text on a curved baseline along the top
+  const r=128; const total=arcText.length;
+  for(let i=0;i<total;i++){
+    const ch=arcText[i];
+    const a = -Math.PI/2 + (i - (total-1)/2) * 0.16;
+    x.save();
+    x.translate(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+    x.rotate(a + Math.PI/2);
+    x.fillText(ch,0,0);
+    x.restore();
+  }
+
+  // big rank number
+  x.fillStyle=txt;
+  const numSize = rank>9 ? 170 : 210;
+  x.font=`800 ${numSize}px 'Bricolage Grotesque',sans-serif`;
+  // soft drop-shadow for legibility from a distance
+  x.shadowColor='rgba(0,0,0,0.25)'; x.shadowBlur=10; x.shadowOffsetY=4;
+  x.fillText('#'+rank, cx, cy+18);
+  x.shadowBlur=0; x.shadowOffsetY=0;
+
+  // little decorative stars beside the arc text (top 3 only)
+  if(rank<=3){
+    const sCol = ringDark;
+    x.fillStyle=sCol;
+    function star(px,py,size){
+      x.save(); x.translate(px,py);
+      x.beginPath();
+      for(let k=0;k<5;k++){
+        const ang=-Math.PI/2 + k*(2*Math.PI/5);
+        const r1=size, r2=size*0.45;
+        x.lineTo(Math.cos(ang)*r1, Math.sin(ang)*r1);
+        const a2=ang + Math.PI/5;
+        x.lineTo(Math.cos(a2)*r2, Math.sin(a2)*r2);
+      }
+      x.closePath(); x.fill(); x.restore();
+    }
+    star(cx-130, cy+8, 9);
+    star(cx+130, cy+8, 9);
+  }
+  return tex(c);
+}
+
+/* small radial light disc — additive on the floor under each podium */
+function spotDiscTexture(){
+  const W=256, c=document.createElement('canvas'); c.width=W; c.height=W;
+  const x=c.getContext('2d');
+  const g=x.createRadialGradient(W/2,W/2,8, W/2,W/2,W/2);
+  g.addColorStop(0,'rgba(255,240,180,0.85)');
+  g.addColorStop(0.45,'rgba(255,220,140,0.25)');
+  g.addColorStop(1,'rgba(255,200,100,0)');
+  x.fillStyle=g; x.fillRect(0,0,W,W);
+  return tex(c);
+}
+
+/* hanging banner across the back fence */
+function bannerTexture(){
+  const W=2048,H=200,c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d');
+  // dark navy fabric with subtle horizontal weave
+  x.fillStyle='#0d2440'; x.fillRect(0,0,W,H);
+  x.globalAlpha=0.06;
+  for(let y=0;y<H;y+=3){ x.fillStyle = y%6===0?'#fff':'#000'; x.fillRect(0,y,W,1); }
+  x.globalAlpha=1;
+  // gold accent stripes
+  x.fillStyle='#ffce1f'; x.fillRect(0,0,W,5); x.fillRect(0,H-5,W,5);
+  // repeated text — wraps around long banner
+  const phrase = '★  GLOBAL GAME SALES  ·  A WALKTHROUGH MUSEUM  ·  TOP-15 ALL-TIME  ';
+  x.fillStyle='#fff';
+  x.font=`800 78px 'Bricolage Grotesque',sans-serif`;
+  x.textAlign='left'; x.textBaseline='middle';
+  let full = ''; while(x.measureText(full).width < W*1.5) full += phrase;
+  x.fillText(full, -20, H/2+4);
+  return tex(c);
+}
+
 /* national flags (procedural) */
 const flagCache={};
 function flagTexture(region){
@@ -524,7 +713,7 @@ function flagTexture(region){
     x.fillStyle='#0047a0';x.beginPath();x.arc(cx,cy-r/2,r/2,0,7);x.fill();
     x.fillStyle='#cd2e3a';x.beginPath();x.arc(cx,cy+r/2,r/2,0,7);x.fill();
     x.restore();
-    x.fillStyle='#111';const bw=26,bh=4,gp=6; // four simplified trigrams
+    x.fillStyle='#111';const bw=26,bh=4,gp=6;
     const tri=(px,py,ang)=>{x.save();x.translate(px,py);x.rotate(ang);for(let i=0;i<3;i++)x.fillRect(-bw/2,i*gp-gp,bw,bh);x.restore();};
     tri(48,40,0.6);tri(W-48,40,-0.6);tri(48,H-40,-0.6);tri(W-48,H-40,0.6);
   }
@@ -532,16 +721,17 @@ function flagTexture(region){
   const t=tex(c); flagCache[region]=t; return t;
 }
 
-/* ════════════════════════ WORLD GEOMETRY ════════════════════════ */
+/* ════════════════════════ WORLD GEOMETRY (data-independent) ════════════════ */
 function buildGround(){
-  // grass with subtle two-tone + a light central walkway
   const c=document.createElement('canvas');c.width=1024;c.height=1024;const x=c.getContext('2d');
   x.fillStyle='#5f9a52';x.fillRect(0,0,1024,1024);
   for(let i=0;i<2200;i++){x.fillStyle=Math.random()>0.5?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
     x.fillRect(Math.random()*1024,Math.random()*1024,3,3);}
-  // walkway band across the middle (the row sits on it)
+  // walkway band across the middle
   x.fillStyle='#cfd8d0'; x.fillRect(0,452,1024,120);
   x.fillStyle='#e7ece8'; x.fillRect(0,468,1024,88);
+  // subtle stone speckle along the walkway
+  for(let i=0;i<400;i++){ x.fillStyle='rgba(13,36,64,0.04)'; x.fillRect(Math.random()*1024, 470+Math.random()*84, 4, 2); }
   const t=tex(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(6,6);
   const g=new THREE.Mesh(new THREE.PlaneGeometry(900,900), new THREE.MeshStandardMaterial({map:t,roughness:1}));
   g.rotation.x=-Math.PI/2; g.receiveShadow=true; scene.add(g);
@@ -563,104 +753,159 @@ function makeTree(x,z,sc){
   }
   grp.position.set(x,0,z); grp.scale.setScalar(0.9+Math.random()*0.5); scene.add(grp);
 }
-// scatter trees behind and in front of the row, avoiding the podium line
-for(let i=0;i<34;i++){
-  const x=X0-6+Math.random()*(ROW_W+12);
-  let z=(Math.random()>0.5? 1:-1)*(9+Math.random()*22);
-  makeTree(x,z,1.1+Math.random()*0.7);
-}
 
-/* chain-link fence backdrop */
-(function fence(){
+/* ════════════════════════ DATA-DRIVEN SCENERY ════════════════════════ */
+const SPOT_TEX = spotDiscTexture();
+
+function buildSceneFurniture(){
+  // trees scattered around the perimeter (behind and in front of row)
+  for(let i=0;i<38;i++){
+    const x=X0-8+Math.random()*(ROW_W+16);
+    const z=(Math.random()>0.5? 1:-1)*(11+Math.random()*22);
+    makeTree(x,z,1.0+Math.random()*0.7);
+  }
+
+  // chain-link fence backdrop on both sides
   const c=document.createElement('canvas');c.width=64;c.height=64;const x=c.getContext('2d');
   x.clearRect(0,0,64,64); x.strokeStyle='rgba(150,160,170,0.85)';x.lineWidth=2;
   x.beginPath();for(let i=-64;i<128;i+=16){x.moveTo(i,0);x.lineTo(i+64,64);x.moveTo(i,64);x.lineTo(i+64,0);}x.stroke();
-  const t=tex(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(60,3);
+  const t=tex(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(Math.max(60,Math.floor(ROW_W/2)),3);
   const m=new THREE.MeshStandardMaterial({map:t,transparent:true,roughness:1,side:THREE.DoubleSide,
     color:0xb8c2cc,metalness:0.2});
   for(const zz of [-34,34]){
-    const f=new THREE.Mesh(new THREE.PlaneGeometry(ROW_W+80,7), m);
+    const f=new THREE.Mesh(new THREE.PlaneGeometry(ROW_W+90,7), m);
     f.position.set(0,3.5,zz); scene.add(f);
-    // posts
     for(let px=-1;px<=N;px+=2){
       const p=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,7,6),
         new THREE.MeshStandardMaterial({color:0x9aa6b2,metalness:0.3,roughness:0.7}));
       p.position.set(posX(px),3.5,zz); scene.add(p);
     }
   }
-})();
 
-/* ── EXHIBITS ── */
+  // hanging banner just inside the back fence
+  const bm = new THREE.MeshStandardMaterial({map:bannerTexture(), side:THREE.DoubleSide,
+    roughness:0.85, metalness:0.05});
+  const bn = new THREE.Mesh(new THREE.PlaneGeometry(ROW_W+30, 3.4), bm);
+  bn.position.set(0, 6.8, -28); bn.userData.banner = true; scene.add(bn);
+  // little gold tassel ropes
+  for(let i=0;i<6;i++){
+    const x = -(ROW_W/2+12) + (ROW_W+24)*(i/5);
+    const rope=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,1.6,6),
+      new THREE.MeshStandardMaterial({color:0xffce1f,roughness:0.5,metalness:0.4}));
+    rope.position.set(x, 7.8, -28); scene.add(rope);
+  }
+}
+
+/* ════════════════════════ EXHIBITS ════════════════════════ */
 const exhibits=[];        // {g,index, podium, decal, cover, flag, flagGeo, base, picks[], originals{}}
-const pickMeshes=[];      // raycast targets
+const pickMeshes=[];
+
 const podiumGradient=(function(){
   const c=document.createElement('canvas');c.width=8;c.height=256;const x=c.getContext('2d');
   const grd=x.createLinearGradient(0,0,0,256);
-  grd.addColorStop(0,'#6ea0ff'); grd.addColorStop(0.5,'#3f78ee'); grd.addColorStop(1,'#2a5bd0');
+  grd.addColorStop(0,'#7aabff'); grd.addColorStop(0.5,'#3f78ee'); grd.addColorStop(1,'#1f4ec0');
   x.fillStyle=grd;x.fillRect(0,0,8,256); const t=tex(c); return t;
 })();
 
-GAMES.forEach((g,i)=>{
-  const x=posX(i), z=ROW_CENTER;
-  const h = 3 + (g.sales/MAX_SALES)*20;        // podium height scaled to sales
-  const PW=4;                                   // podium width/depth
-  const grp=new THREE.Group(); grp.position.set(x,0,z); scene.add(grp);
+function buildExhibits(){
+  GAMES.forEach((g,i)=>{
+    const x=posX(i), z=0;
+    const h = 3 + (g.sales/MAX_SALES)*20;          // podium height scaled to sales
+    const PW=4;
+    const grp=new THREE.Group(); grp.position.set(x,0,z); scene.add(grp);
 
-  // base slab
-  const base=new THREE.Mesh(new THREE.BoxGeometry(PW+0.7,0.4,PW+0.7),
-    new THREE.MeshStandardMaterial({color:0xcfd8d0,roughness:0.9}));
-  base.position.y=0.2; base.receiveShadow=true; base.castShadow=true; grp.add(base);
+    // soft floor light disc (additive)
+    const disc = new THREE.Mesh(
+      new THREE.PlaneGeometry(8,8),
+      new THREE.MeshBasicMaterial({map:SPOT_TEX, transparent:true, depthWrite:false,
+        blending:THREE.AdditiveBlending, opacity:0.9})
+    );
+    disc.rotation.x = -Math.PI/2; disc.position.y = 0.012; grp.add(disc);
 
-  // podium
-  const podMat=new THREE.MeshStandardMaterial({map:podiumGradient,roughness:0.38,metalness:0.15});
-  const podium=new THREE.Mesh(new THREE.BoxGeometry(PW,h,PW), podMat);
-  podium.position.y=0.4+h/2; podium.castShadow=true; podium.receiveShadow=true;
-  podium.userData={index:i}; grp.add(podium); pickMeshes.push(podium);
+    // base slab — with thin gold accent stripe along the front edge
+    const base=new THREE.Mesh(new THREE.BoxGeometry(PW+0.7,0.4,PW+0.7),
+      new THREE.MeshStandardMaterial({color:0xcfd8d0,roughness:0.9}));
+    base.position.y=0.2; base.receiveShadow=true; base.castShadow=true; grp.add(base);
+    const stripe=new THREE.Mesh(new THREE.BoxGeometry(PW+0.7,0.06,0.05),
+      new THREE.MeshStandardMaterial({color:0xffce1f,roughness:0.5,metalness:0.3,emissive:0x553f00,emissiveIntensity:0.2}));
+    stripe.position.set(0, 0.42, (PW+0.7)/2+0.01); grp.add(stripe);
 
-  // front decal (fixed size so text never stretches)
-  const dH=Math.min(3.6, h*0.82), dW=dH*(512/560)*1.78;
-  const decalMat=new THREE.MeshBasicMaterial({map:podiumDecal(g),transparent:true,depthWrite:false});
-  const decal=new THREE.Mesh(new THREE.PlaneGeometry(dW,dH), decalMat);
-  decal.position.set(0, 0.4+h-dH/2-0.5, PW/2+0.02);
-  grp.add(decal);
+    // podium
+    const podMat=new THREE.MeshStandardMaterial({map:podiumGradient,roughness:0.38,metalness:0.15});
+    const podium=new THREE.Mesh(new THREE.BoxGeometry(PW,h,PW), podMat);
+    podium.position.y=0.4+h/2; podium.castShadow=true; podium.receiveShadow=true;
+    podium.userData={index:i}; grp.add(podium); pickMeshes.push(podium);
 
-  // cover card on top
-  const coverGrp=new THREE.Group();
-  const cv=new THREE.Mesh(new THREE.BoxGeometry(3.0,4.0,0.22),
-    [new THREE.MeshStandardMaterial({color:0xdfe6ee,roughness:.6}),
-     new THREE.MeshStandardMaterial({color:0xdfe6ee,roughness:.6}),
-     new THREE.MeshStandardMaterial({color:0xeef2f6,roughness:.6}),
-     new THREE.MeshStandardMaterial({color:0xeef2f6,roughness:.6}),
-     new THREE.MeshStandardMaterial({map:coverCard(g),roughness:.55}),
-     new THREE.MeshStandardMaterial({color:0x223,roughness:.7})]);
-  cv.castShadow=true; coverGrp.add(cv);
-  // little stand
-  const stand=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.2,1.0),
-    new THREE.MeshStandardMaterial({color:0xb9c2cc,roughness:.8}));
-  stand.position.y=-2.1; coverGrp.add(stand);
-  coverGrp.position.set(0, 0.4+h+2.3, 0.4);
-  coverGrp.userData={index:i}; grp.add(coverGrp); pickMeshes.push(cv);
+    // front decal (fixed size so text never stretches)
+    const dH=Math.min(3.7, h*0.82), dW=dH*(512/560)*1.78;
+    const decalMat=new THREE.MeshBasicMaterial({map:podiumDecal(g),transparent:true,depthWrite:false});
+    const decal=new THREE.Mesh(new THREE.PlaneGeometry(dW,dH), decalMat);
+    decal.position.set(0, 0.4+h-dH/2-0.5, PW/2+0.02);
+    grp.add(decal);
 
-  // flag beside the podium
-  const flagGrp=new THREE.Group();
-  const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,4.6,6),
-    new THREE.MeshStandardMaterial({color:0xd9dee4,metalness:.4,roughness:.5}));
-  pole.position.y=2.3; flagGrp.add(pole);
-  const fGeo=new THREE.PlaneGeometry(2.3,1.45,16,8);
-  const flag=new THREE.Mesh(fGeo, new THREE.MeshStandardMaterial({map:flagTexture(g.region),
-    side:THREE.DoubleSide,roughness:.85}));
-  flag.position.set(1.2,3.75,0); flagGrp.add(flag);
-  flagGrp.position.set(PW/2+1.4, 0.4+Math.min(h*0.55,h-1), PW/2-0.4);
-  grp.add(flagGrp);
+    // cover card on top
+    const coverGrp=new THREE.Group();
+    const cv=new THREE.Mesh(new THREE.BoxGeometry(3.0,4.0,0.22),
+      [new THREE.MeshStandardMaterial({color:0xdfe6ee,roughness:.6}),
+       new THREE.MeshStandardMaterial({color:0xdfe6ee,roughness:.6}),
+       new THREE.MeshStandardMaterial({color:0xeef2f6,roughness:.6}),
+       new THREE.MeshStandardMaterial({color:0xeef2f6,roughness:.6}),
+       new THREE.MeshStandardMaterial({map:coverCard(g),roughness:.55}),
+       new THREE.MeshStandardMaterial({color:0x223,roughness:.7})]);
+    cv.castShadow=true; coverGrp.add(cv);
+    const stand=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.2,1.0),
+      new THREE.MeshStandardMaterial({color:0xb9c2cc,roughness:.8}));
+    stand.position.y=-2.1; coverGrp.add(stand);
+    // small gold accent strip on the stand
+    const standAccent=new THREE.Mesh(new THREE.BoxGeometry(2.0,0.04,1.02),
+      new THREE.MeshStandardMaterial({color:0xffce1f,roughness:0.4,metalness:0.5}));
+    standAccent.position.y=-2.0; coverGrp.add(standAccent);
+    coverGrp.position.set(0, 0.4+h+2.3, 0.4);
+    coverGrp.userData={index:i}; grp.add(coverGrp); pickMeshes.push(cv);
 
-  exhibits.push({g,index:i,grp,podium,decal,decalMat,cover:cv,coverGrp,flag,flagGeo:fGeo,
-    podMat, baseY:0.4+h+2.3, originals:{podColor:podMat.color.clone()}, h});
-});
+    // ── FLOATING RANK MEDALLION (the headline visual upgrade) ──
+    const badgeSize = (g.rank<=3) ? 4.2 : 3.4;
+    const badgeMat = new THREE.MeshBasicMaterial({map:rankBadgeTexture(g.rank),
+      transparent:true, depthWrite:false});
+    const badge = new THREE.Mesh(new THREE.PlaneGeometry(badgeSize, badgeSize), badgeMat);
+    const badgeBaseY = 0.4 + h + 7.0;            // floats above the cover card
+    badge.position.set(0, badgeBaseY, 0.4);
+    badge.userData={index:i}; grp.add(badge); pickMeshes.push(badge);
+
+    // thin tether line from podium top to badge (gives spatial anchor)
+    const tetherMat = new THREE.LineBasicMaterial({color:0xffce1f, transparent:true, opacity:0.45});
+    const tetherGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0.4+h+0.05, 0.4),
+      new THREE.Vector3(0, badgeBaseY - badgeSize/2 - 0.1, 0.4)
+    ]);
+    const tether = new THREE.Line(tetherGeo, tetherMat);
+    grp.add(tether);
+
+    // flag beside the podium
+    const flagGrp=new THREE.Group();
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,4.6,6),
+      new THREE.MeshStandardMaterial({color:0xd9dee4,metalness:.4,roughness:.5}));
+    pole.position.y=2.3; flagGrp.add(pole);
+    const fGeo=new THREE.PlaneGeometry(2.3,1.45,16,8);
+    const flag=new THREE.Mesh(fGeo, new THREE.MeshStandardMaterial({map:flagTexture(g.region),
+      side:THREE.DoubleSide,roughness:.85}));
+    flag.position.set(1.2,3.75,0); flagGrp.add(flag);
+    flagGrp.position.set(PW/2+1.4, 0.4+Math.min(h*0.55,h-1), PW/2-0.4);
+    grp.add(flagGrp);
+
+    exhibits.push({g,index:i,grp,podium,decal,decalMat,cover:cv,coverGrp,flag,flagGeo:fGeo,
+      podMat, badge, badgeMat, badgeBaseY, tether, tetherMat,
+      baseY:0.4+h+2.3, originals:{podColor:podMat.color.clone()}, h});
+  });
+}
 
 /* ════════════════════════ CAMERA CONTROLS ════════════════════════ */
 let target=new THREE.Vector3(0,3,0), yaw=-0.5, pitch=0.30, radius=46;
 let dragging=false, pm={x:0,y:0}, keys={}, viewMode='persp';
 let fly=null;
+
+/* "starting position" used by Reset — captured once after init() */
+let startCam = null;
 
 function applyCam(){
   const cx=target.x+radius*Math.cos(pitch)*Math.sin(yaw);
@@ -670,20 +915,22 @@ function applyCam(){
 }
 function resetCamera(){
   if(fly)cancelAnimationFrame(fly);
-  flyTo({tx:0,ty:5,tz:0, yaw:-0.5, pitch:0.30, radius:Math.max(40,ROW_W*0.42)});
+  if(!startCam){
+    startCam = {tx:0, ty:5, tz:0, yaw:-0.5, pitch:0.30, radius:Math.max(44, ROW_W*0.42)};
+  }
+  flyTo(startCam);
   viewMode='persp'; document.getElementById('topbtn').classList.remove('on');
   document.getElementById('topbtn').lastChild.textContent=' Top View';
-  closeDetail(); setActive(-1);
+  closeDetail(); setActive(-1); currentIndex=-1; updateNavInfo(-1);
 }
 function cycleView(){
   const b=document.getElementById('topbtn');
   if(viewMode==='persp'){ viewMode='top'; b.classList.add('on'); b.lastChild.textContent=' 3D View';
     flyTo({tx:0,ty:0,tz:0, yaw:0, pitch:Math.PI/2-0.05, radius:ROW_W*0.7});
   } else { viewMode='persp'; b.classList.remove('on'); b.lastChild.textContent=' Top View';
-    flyTo({tx:0,ty:5,tz:0, yaw:-0.5, pitch:0.30, radius:Math.max(40,ROW_W*0.42)}); }
+    flyTo(startCam || {tx:0,ty:5,tz:0, yaw:-0.5, pitch:0.30, radius:Math.max(44,ROW_W*0.42)}); }
 }
 
-/* smooth flight to a camera state */
 function flyTo(s, cb){
   if(fly)cancelAnimationFrame(fly);
   const s0={tx:target.x,ty:target.y,tz:target.z,yaw,pitch,radius};
@@ -699,9 +946,9 @@ function flyTo(s, cb){
 
 function flyToExhibit(i, openPanel){
   const e=exhibits[i];
-  flyTo({tx:posX(i), ty:e.h*0.45+1, tz:0, yaw:-0.42, pitch:0.18+Math.min(e.h*0.012,0.22),
-    radius:13+e.h*0.55}, ()=>{ if(openPanel) showDetail(i); });
-  setActive(i); currentIndex=i;
+  flyTo({tx:posX(i), ty:e.h*0.45+2, tz:0, yaw:-0.42, pitch:0.20+Math.min(e.h*0.011,0.22),
+    radius:15+e.h*0.55}, ()=>{ if(openPanel) showDetail(i); });
+  setActive(i); currentIndex=i; updateNavInfo(i);
 }
 
 canvas.addEventListener('mousedown',e=>{dragging=true;pm={x:e.clientX,y:e.clientY};});
@@ -716,7 +963,11 @@ canvas.addEventListener('touchstart',e=>{lt=e.touches[0];},{passive:false});
 canvas.addEventListener('touchmove',e=>{const t=e.touches[0];
   yaw-=(t.clientX-lt.clientX)*0.006; pitch=Math.max(0.05,Math.min(Math.PI/2-0.04,pitch-(t.clientY-lt.clientY)*0.006));
   lt=t;e.preventDefault();},{passive:false});
-addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);
+addEventListener('keydown',e=>{
+  // don't trap input keys while user is typing a rank into the jump field
+  if(document.activeElement && document.activeElement.id==='jump-input') return;
+  keys[e.key.toLowerCase()]=true;
+});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 
 function walk(){
@@ -749,7 +1000,7 @@ canvas.addEventListener('mousemove',e=>{ if(dragging)return;
 });
 
 /* ════════════════════════ SIDEBAR / FILTERS ════════════════════════ */
-function flagSwatchHTML(region){ // tiny css flag for list/detail
+function flagSwatchHTML(region){
   if(region==='JP')return `<span class="r-flag" style="background:#fff;position:relative"><span style="position:absolute;inset:0;margin:auto;width:6px;height:6px;border-radius:50%;background:#bc002d"></span></span>`;
   if(region==='US')return `<span class="r-flag" style="background:repeating-linear-gradient(#b22234 0 2px,#fff 2px 4px)"></span>`;
   if(region==='SE')return `<span class="r-flag" style="background:#006aa7;position:relative"><span style="position:absolute;left:4px;top:0;bottom:0;width:2px;background:#fecc00"></span><span style="position:absolute;top:4px;left:0;right:0;height:2px;background:#fecc00"></span></span>`;
@@ -765,10 +1016,12 @@ function buildChips(id, items, key){
     wrap.appendChild(b);
   });
 }
+function rankClass(rank){ return rank===1?'gold':rank===2?'silver':rank===3?'bronze':''; }
 function buildList(){
   const el=document.getElementById('list'); el.innerHTML='';
   GAMES.forEach((g,i)=>{
-    const row=document.createElement('div'); row.className='row'+(g.rank===1?' gold':''); row.id='row-'+i;
+    const row=document.createElement('div');
+    row.className='row '+rankClass(g.rank); row.id='row-'+i;
     row.innerHTML=`<div class="rk">${g.rank}</div>
       <div class="r-info"><div class="r-name">${g.title}</div>
       <div class="r-sub">${flagSwatchHTML(g.region)} ${g.platform} · ${g.era}</div></div>
@@ -784,15 +1037,16 @@ function applyFilter(){
   exhibits.forEach((e,i)=>{
     const on=matches(e.g); if(on)shown++;
     document.getElementById('row-'+i).classList.toggle('dim',!on);
-    // 3D dim
     const op=on?1:0.12;
     e.podMat.transparent=!on; e.podMat.opacity=on?1:0.16;
     e.podMat.color.copy(e.originals.podColor).lerp(new THREE.Color(0xaeb8c4), on?0:0.8);
     e.decalMat.opacity=op;
+    e.badgeMat.opacity=on?1:0.18;
+    e.tetherMat.opacity=on?0.45:0.10;
     e.cover.material.forEach(mm=>{mm.transparent=!on;mm.opacity=on?1:0.14;});
     e.coverGrp.children.forEach(ch=>{if(ch.material&&ch!==e.cover){ch.material.transparent=!on;ch.material.opacity=on?1:0.14;}});
     e.flag.material.transparent=!on; e.flag.material.opacity=on?1:0.14;
-    e.grp.children.forEach(ch=>{ // flagpole/stand groups
+    e.grp.children.forEach(ch=>{
       if(ch.type==='Group')ch.children.forEach(cc=>{if(cc.material){cc.material.transparent=!on;cc.material.opacity=on?1:0.18;}});
     });
   });
@@ -825,8 +1079,9 @@ function showDetail(i){
       <div class="bar-bg"><div class="bar-fill" data-t="${pct}"></div></div>
     </div>
     <div class="tags"><span class="tag">${g.genre}</span><span class="tag">${g.platform}</span><span class="tag">${g.era}</span></div>
+    <div class="d-note-label">Notes</div>
     <div class="d-note">${g.note}</div>
-    ${g.caveat?`<div class="d-caveat"><b>Data note:</b> ${g.caveat}</div>`:''}
+    ${g.caveat?`<div class="d-caveat"><div class="ic">!</div><div class="cv-body"><div><b>Data caveat</b></div>${g.caveat}</div></div>`:''}
   `;
   document.getElementById('detail').classList.add('open');
   setTimeout(()=>{const f=document.querySelector('.bar-fill'); if(f)f.style.width=f.dataset.t+'%';},90);
@@ -834,14 +1089,27 @@ function showDetail(i){
 function flagDetailHTML(r){return flagSwatchHTML(r).replace('r-flag','d-flag');}
 function closeDetail(){document.getElementById('detail').classList.remove('open');setActive(-1);}
 
-/* ════════════════════════ NAV / TOUR ════════════════════════ */
-function step(dir){ // dir +1 => toward #1 (index-1)
+/* ════════════════════════ NAV / TOUR / JUMP ════════════════════════ */
+function step(dir){
   if(tourActive) stopTour();
   let i=currentIndex; if(i<0)i=dir>0?N-1:0; else i=Math.max(0,Math.min(N-1,i-dir));
-  flyToExhibit(i,true); updateNavInfo(i);
+  flyToExhibit(i,true);
 }
 function updateNavInfo(i){
   document.getElementById('nav-info').textContent = i>=0? `#${GAMES[i].rank} · ${GAMES[i].title}` : 'Click any podium';
+}
+function jumpToRank(){
+  const inp = document.getElementById('jump-input');
+  const v = parseInt(inp.value,10);
+  if(isNaN(v) || v<1 || v>N){
+    inp.value=''; inp.focus();
+    inp.style.borderColor='#e35454';
+    setTimeout(()=>{inp.style.borderColor='';},700);
+    return;
+  }
+  inp.value=''; inp.blur();
+  if(tourActive) stopTour();
+  flyToExhibit(v-1, true);
 }
 function toggleTour(){ tourActive?stopTour():startTour(); }
 function startTour(){
@@ -858,7 +1126,7 @@ function stopTour(){
   document.getElementById('tour-btn').lastChild.textContent=' Guided Tour';
   const pb=document.getElementById('play-btn'); pb.classList.remove('on'); pb.textContent='▶ Tour';
 }
-function tourGo(){ flyToExhibit(currentIndex,true); updateNavInfo(currentIndex); }
+function tourGo(){ flyToExhibit(currentIndex,true); }
 
 /* ════════════════════════ MISC UI ════════════════════════ */
 function toggleSidebar(){ sidebarOpen=!sidebarOpen; document.getElementById('sidebar').classList.toggle('hidden',!sidebarOpen); }
@@ -875,10 +1143,14 @@ function drawMini(){
   exhibits.forEach((e,i)=>{
     const mx=pad+(i/(N-1))*span, my=H-26;
     const on=matches(e.g);
-    mctx.fillStyle = e.g.rank===1?'#ffce1f':(on?'#2f6bf0':'rgba(47,107,240,0.25)');
+    let col;
+    if(e.g.rank===1) col='#e8a900';
+    else if(e.g.rank===2) col='#a8b4c0';
+    else if(e.g.rank===3) col='#a8682f';
+    else col= on?'#2f6bf0':'rgba(47,107,240,0.25)';
+    mctx.fillStyle = col;
     mctx.beginPath(); mctx.arc(mx,my, i===currentIndex?6:4, 0,7); mctx.fill();
   });
-  // camera marker
   const camX=pad+((target.x-X0)/ROW_W)*span;
   mctx.strokeStyle='rgba(13,36,64,0.6)'; mctx.lineWidth=2;
   mctx.beginPath(); mctx.moveTo(Math.max(pad,Math.min(W-pad,camX)),18); mctx.lineTo(Math.max(pad,Math.min(W-pad,camX)),H-12); mctx.stroke();
@@ -899,6 +1171,13 @@ function animate(){
     for(let k=0;k<pos.count;k++){const px=pos.getX(k);
       pos.setZ(k, Math.sin(px*2.2 + t*3 + i)*0.12*(px+1.15));}
     pos.needsUpdate=true;
+    // floating rank badge: bob + always face camera (billboard) + #1 gentle pulse
+    e.badge.position.y = e.badgeBaseY + Math.sin(t*1.5 + i*0.4)*0.18;
+    e.badge.quaternion.copy(camera.quaternion);
+    if(e.g.rank===1){
+      const s = 1 + Math.sin(t*2.2)*0.035;
+      e.badge.scale.set(s,s,1);
+    }
   });
   drawMini();
   renderer.render(scene,camera);
@@ -910,15 +1189,33 @@ addEventListener('resize',()=>{
 });
 
 /* ════════════════════════ INIT ════════════════════════ */
-FONTS_READY.then(()=>{
+(async function init(){
+  const [games] = await Promise.all([loadGames(), FONTS_READY]);
+  GAMES = games;
+  REGIONS   = [...new Set(GAMES.map(g=>g.region))];
+  PLATFORMS = [...new Set(GAMES.map(g=>g.platform))];
+  GENRES    = [...new Set(GAMES.map(g=>g.genre))];
+  MAX_SALES = Math.max(...GAMES.map(g=>g.sales));
+  N         = GAMES.length;
+  ROW_W     = (N-1)*SPACING;
+  X0        = -ROW_W/2;
+
+  // jump-input max derives from N
+  document.getElementById('jump-input').max = N;
+  document.getElementById('jump-input').placeholder = '1–'+N;
+
+  buildSceneFurniture();
+  buildExhibits();
+
   buildChips('f-region',REGIONS,'region');
   buildChips('f-platform',PLATFORMS,'platform');
   buildChips('f-genre',GENRES,'genre');
   buildList();
+
   resetCamera();
   animate();
   setTimeout(()=>document.getElementById('load').classList.add('done'),500);
-});
+})();
 </script>
 </body>
 </html>
