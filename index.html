@@ -588,7 +588,6 @@ function coverCard(g){
     const sc=Math.max(W/photo.width, H/photo.height);
     const dw=photo.width*sc, dh=photo.height*sc;
     x.drawImage(photo, (W-dw)/2, (H-dh)/2, dw, dh);
-    drawCoverLabels(x,W,H,g);
   } else {
     const base=g.color, dk=shade(base,0.45), lt=shade(base,1.25);
     const grad=x.createLinearGradient(0,0,W,H); grad.addColorStop(0,lt); grad.addColorStop(1,dk);
