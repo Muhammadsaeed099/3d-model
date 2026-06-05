@@ -132,6 +132,8 @@
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
   .tag{font-size:10px;font-weight:600;color:var(--azure);background:rgba(47,107,240,.1);
     border:1px solid rgba(47,107,240,.2);border-radius:20px;padding:3px 10px;}
+  .d-cover{width:100%;border-radius:12px;margin-bottom:16px;aspect-ratio:3/4;object-fit:cover;
+    border:1px solid var(--line-soft);display:block;background:rgba(47,107,240,.06);}
   .d-note{font-size:12.5px;line-height:1.65;color:var(--ink-soft);margin-bottom:6px;}
   .d-note-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);
     font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
@@ -243,49 +245,49 @@
      ════════════════════════════════════════════════════════════════════════════ -->
 <script type="application/json" id="games-data">
 [
-  {"rank":1,"title":"Minecraft","sales":300,"publisher":"Mojang Studios","region":"SE","platform":"Multi","era":"2011","genre":"Sandbox","color":"#4caf50",
+  {"rank":1,"title":"Minecraft","sales":300,"publisher":"Mojang Studios","region":"SE","platform":"Multi","era":"2011","genre":"Sandbox","color":"#4caf50","image":"images/01-minecraft.jpg",
    "note":"The best-selling video game of all time. Players build and explore endless procedurally generated worlds; longevity across every platform keeps the number climbing.",
    "caveat":"Counts all editions across all platforms combined."},
-  {"rank":2,"title":"Grand Theft Auto V","sales":205,"publisher":"Rockstar Games","region":"US","platform":"Multi","era":"2013","genre":"Action","color":"#f97316",
+  {"rank":2,"title":"Grand Theft Auto V","sales":205,"publisher":"Rockstar Games","region":"US","platform":"Multi","era":"2013","genre":"Action","color":"#f97316","image":"images/02-gta-v.jpg",
    "note":"Rockstar's open-world juggernaut, sustained for a decade by GTA Online and re-releases across three console generations.",
    "caveat":null},
-  {"rank":3,"title":"Tetris (EA Mobile)","sales":100,"publisher":"Electronic Arts","region":"US","platform":"Mobile","era":"2006","genre":"Puzzle","color":"#a855f7",
+  {"rank":3,"title":"Tetris (EA Mobile)","sales":100,"publisher":"Electronic Arts","region":"US","platform":"Mobile","era":"2006","genre":"Puzzle","color":"#a855f7","image":"images/03-tetris.png",
    "note":"The mobile-era resurgence of the block-stacking classic, bundled across feature phones during the casual-gaming boom.",
-   "caveat":"This is the EA mobile edition only — not every Tetris version ever made combined."},
-  {"rank":4,"title":"Wii Sports","sales":83,"publisher":"Nintendo","region":"JP","platform":"Wii","era":"2006","genre":"Sports","color":"#fbbf24",
+   "caveat":"This is the EA mobile edition only, not every Tetris version ever made combined."},
+  {"rank":4,"title":"Wii Sports","sales":83,"publisher":"Nintendo","region":"JP","platform":"Wii","era":"2006","genre":"Sports","color":"#fbbf24","image":"images/04-wii-sports.jpg",
    "note":"The motion-control showcase that put a Wii in living rooms worldwide and made gamers of non-gamers.",
    "caveat":"Largely a pack-in title bundled with the console in most regions."},
-  {"rank":5,"title":"PUBG: Battlegrounds","sales":75,"publisher":"PUBG Studios","region":"KR","platform":"Multi","era":"2017","genre":"Battle Royale","color":"#ef4444",
+  {"rank":5,"title":"PUBG: Battlegrounds","sales":75,"publisher":"PUBG Studios","region":"KR","platform":"Multi","era":"2017","genre":"Battle Royale","color":"#ef4444","image":"images/05-pubg.jpg",
    "note":"PlayerUnknown's Battlegrounds defined the modern battle-royale and ignited a genre that reshaped online play.",
    "caveat":"Boxed PC / console sales; excludes the separate free-to-play mobile version."},
-  {"rank":6,"title":"Mario Kart 8 Deluxe","sales":67,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2017","genre":"Racing","color":"#38bdf8",
+  {"rank":6,"title":"Mario Kart 8 Deluxe","sales":67,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2017","genre":"Racing","color":"#38bdf8","image":"images/06-mario-kart-8.webp",
    "note":"The definitive kart racer, riding the Switch's enormous install base plus a steady stream of track DLC.",
    "caveat":null},
-  {"rank":7,"title":"Red Dead Redemption 2","sales":64,"publisher":"Rockstar Games","region":"US","platform":"Multi","era":"2018","genre":"Action","color":"#7c2d2d",
+  {"rank":7,"title":"Red Dead Redemption 2","sales":64,"publisher":"Rockstar Games","region":"US","platform":"Multi","era":"2018","genre":"Action","color":"#7c2d2d","image":"images/07-rdr2.jpg",
    "note":"A sprawling, detail-obsessed open-world Western widely praised for its storytelling and simulation depth.",
    "caveat":null},
-  {"rank":8,"title":"Super Mario Bros.","sales":58,"publisher":"Nintendo","region":"JP","platform":"NES","era":"1985","genre":"Platformer","color":"#dc2626",
+  {"rank":8,"title":"Super Mario Bros.","sales":58,"publisher":"Nintendo","region":"JP","platform":"NES","era":"1985","genre":"Platformer","color":"#dc2626","image":"images/08-super-mario-bros.png",
    "note":"The blockbuster that rescued home consoles in the West and wrote the rulebook for the platformer.",
    "caveat":null},
-  {"rank":9,"title":"Terraria","sales":50,"publisher":"Re-Logic","region":"US","platform":"Multi","era":"2011","genre":"Sandbox","color":"#22c55e",
+  {"rank":9,"title":"Terraria","sales":50,"publisher":"Re-Logic","region":"US","platform":"Multi","era":"2011","genre":"Sandbox","color":"#22c55e","image":"images/09-terraria.jpg",
    "note":"A 2D sandbox-survival adventure with surprising depth that has sold steadily for over a decade.",
    "caveat":null},
-  {"rank":10,"title":"Pokémon Red / Green / Blue","sales":47,"publisher":"Game Freak","region":"JP","platform":"Game Boy","era":"1996","genre":"RPG","color":"#facc15",
+  {"rank":10,"title":"Pokémon Red / Green / Blue","sales":47,"publisher":"Game Freak","region":"JP","platform":"Game Boy","era":"1996","genre":"RPG","color":"#facc15","image":"images/10-pokemon-rgb.jpg",
    "note":"The first-generation games that launched one of the most valuable media franchises ever created.",
    "caveat":"Combined sales of the original Gen-1 releases (incl. Yellow)."},
-  {"rank":11,"title":"Animal Crossing: New Horizons","sales":46,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2020","genre":"Simulation","color":"#34d399",
-   "note":"The pandemic-era comfort hit — a gentle island life-sim that became a cultural moment in 2020.",
+  {"rank":11,"title":"Animal Crossing: New Horizons","sales":46,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2020","genre":"Simulation","color":"#34d399","image":"images/11-animal-crossing.jpg",
+   "note":"The pandemic-era comfort hit, a gentle island life-sim that became a cultural moment in 2020.",
    "caveat":null},
-  {"rank":12,"title":"Wii Fit + Wii Fit Plus","sales":43,"publisher":"Nintendo","region":"JP","platform":"Wii","era":"2007","genre":"Fitness","color":"#06b6d4",
+  {"rank":12,"title":"Wii Fit + Wii Fit Plus","sales":43,"publisher":"Nintendo","region":"JP","platform":"Wii","era":"2007","genre":"Fitness","color":"#06b6d4","image":"images/12-wii-fit.png",
    "note":"The Balance-Board fitness phenomenon that turned the living room into a gym.",
    "caveat":"Combined sales of Wii Fit and the Wii Fit Plus revision."},
-  {"rank":13,"title":"The Elder Scrolls V: Skyrim","sales":41,"publisher":"Bethesda","region":"US","platform":"Multi","era":"2011","genre":"RPG","color":"#94a3b8",
-   "note":"The open-world RPG that keeps being re-released — and keeps selling — across every generation of hardware.",
+  {"rank":13,"title":"The Elder Scrolls V: Skyrim","sales":41,"publisher":"Bethesda","region":"US","platform":"Multi","era":"2011","genre":"RPG","color":"#94a3b8","image":"images/13-skyrim.jpg",
+   "note":"The open-world RPG that keeps being re-released and keeps selling across every generation of hardware.",
    "caveat":"Estimate spanning all editions and re-releases."},
-  {"rank":14,"title":"Call of Duty: Black Ops III","sales":40,"publisher":"Activision","region":"US","platform":"Multi","era":"2015","genre":"Shooter","color":"#d97706",
+  {"rank":14,"title":"Call of Duty: Black Ops III","sales":40,"publisher":"Activision","region":"US","platform":"Multi","era":"2015","genre":"Shooter","color":"#d97706","image":"images/14-cod-bo3.jpg",
    "note":"One of the best-selling entries in the annual shooter behemoth, spanning current and previous-gen consoles.",
    "caveat":null},
-  {"rank":15,"title":"Super Smash Bros. Ultimate","sales":36,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2018","genre":"Fighting","color":"#9333ea",
+  {"rank":15,"title":"Super Smash Bros. Ultimate","sales":36,"publisher":"Nintendo","region":"JP","platform":"Switch","era":"2018","genre":"Fighting","color":"#9333ea","image":"images/15-smash-ultimate.webp",
    "note":"The crossover fighting celebration packing in nearly every character from gaming history.",
    "caveat":null}
 ]
@@ -365,7 +367,7 @@
   <div id="mini" class="panel"><span class="ml">Gallery map</span><canvas id="mini-c" width="300" height="116"></canvas></div>
 
   <div id="hint">
-    <div class="h"><b>Drag</b> 360° orbit · <b>Scroll</b> zoom · <b>Right-drag</b> pan</div>
+    <div class="h"><b>Drag</b> orbit · <b>Scroll</b> zoom · <b>Two-finger slide</b> orbit/zoom · <b>Shift+scroll</b> pan</div>
     <div class="h"><b>←/→</b> prev/next rank · <b>WASD</b> walk · <b>Click</b> podium</div>
   </div>
 </div>
@@ -373,20 +375,20 @@
 <div id="method">
   <div class="mcard">
     <h2>Methodology &amp; honesty note</h2>
-    <div class="sub">What's sourced, what's rounded, what's derived, and what's invented — so nothing here pretends to be more precise than it is.</div>
+    <div class="sub">What's sourced, what's rounded, what's derived, and what's invented. Nothing here pretends to be more precise than it is.</div>
 
     <h3>About the numbers</h3>
-    <p>Sales figures are <b>approximate lifetime units sold, rounded to the nearest million</b>, compiled from publicly reported publisher figures and aggregated sales trackers. Catalogue titles keep selling, so these are a ballpark snapshot (cutoff around 2025–2026) rather than an audited ledger. Strict ranking order is preserved with no ties.</p>
+    <p>Sales figures are <b>approximate lifetime units sold, rounded to the nearest million</b>, compiled from publicly reported publisher figures and aggregated sales trackers. Catalogue titles keep selling, so these are a ballpark snapshot (cutoff around 2025 to 2026) rather than an audited ledger. Strict ranking order is preserved with no ties.</p>
 
-    <h3>What's what — provenance of every element</h3>
+    <h3>What's what: provenance of every element</h3>
     <ul>
-      <li><span class="source-tag st-sourced">Sourced</span><b>Sales &amp; ranking</b> — from public reporting (publisher statements, annual reports, aggregate trackers).</li>
-      <li><span class="source-tag st-rounded">Rounded</span><b>Sales numbers</b> — rounded to the nearest million; treat exact figures as approximate.</li>
-      <li><span class="source-tag st-derived">Derived</span><b>Podium height</b> — scaled linearly to the sales number. Tallest podium = #1.</li>
-      <li><span class="source-tag st-derived">Derived</span><b>"Share of #1" bar</b> in the detail panel — computed live from this dataset.</li>
-      <li><span class="source-tag st-invented">Invented</span><b>Cover cards</b> — original stylised illustration generated procedurally in-app. These are <b>not</b> official box art or scans; they're abstract placeholders so the project ships clean of copyrighted artwork.</li>
-      <li><span class="source-tag st-invented">Invented</span><b>Flag art</b> — drawn procedurally on canvas as a decorative cue for the publisher's home region. Not official heraldry.</li>
-      <li><span class="source-tag st-invented">Invented</span><b>Trees, fence, banner, lighting</b> — purely scenographic, no data meaning.</li>
+      <li><span class="source-tag st-sourced">Sourced</span><b>Sales &amp; ranking:</b> from public reporting (publisher statements, annual reports, aggregate trackers).</li>
+      <li><span class="source-tag st-rounded">Rounded</span><b>Sales numbers:</b> rounded to the nearest million; treat exact figures as approximate.</li>
+      <li><span class="source-tag st-derived">Derived</span><b>Podium height:</b> scaled linearly to the sales number. Tallest podium = #1.</li>
+      <li><span class="source-tag st-derived">Derived</span><b>"Share of #1" bar</b> in the detail panel: computed live from this dataset.</li>
+      <li><span class="source-tag st-sourced">Sourced</span><b>Cover art:</b> reference images supplied for each title. These are illustrative, not official box art from publishers.</li>
+      <li><span class="source-tag st-invented">Invented</span><b>Flag art:</b> drawn procedurally on canvas as a decorative cue for the publisher's home region. Not official heraldry.</li>
+      <li><span class="source-tag st-invented">Invented</span><b>Trees, fence, banner, lighting:</b> purely scenographic, no data meaning.</li>
       <li>Per-title caveats (bundling, edition scope, etc.) appear in each exhibit's detail panel where applicable.</li>
     </ul>
 
@@ -397,20 +399,21 @@
       <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#ffd968,#e8a900)"></span>Gold medallion = #1</span>
       <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#eef1f5,#a8b4c0)"></span>Silver = #2</span>
       <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#e6b282,#a8682f)"></span>Bronze = #3</span>
-      <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#5a8fff,#1f50d4)"></span>Navy = #4 →</span>
+      <span class="lg"><span class="swm" style="background:linear-gradient(135deg,#5a8fff,#1f50d4)"></span>Navy = #4 onward</span>
       <span class="lg"><span class="sw" style="background:linear-gradient(45deg,#bc002d,#006aa7)"></span>Flag = publisher region</span>
     </div>
 
     <h3>Controls reference</h3>
     <ul>
-      <li><b>Drag (left mouse)</b> — orbit the camera; full 360° horizontal, full vertical range (above and below the gallery).</li>
-      <li><b>Right-click drag</b> — pan the look-at target across the scene.</li>
-      <li><b>Mouse wheel</b> — zoom in or out.</li>
-      <li><b>WASD / Arrow keys</b> — walk through the museum; <b>Q</b> and <b>E</b> raise and lower the camera.</li>
-      <li><b>◀ Prev</b> — move to the previous-ranked exhibit (e.g. from #5 to #4).</li>
-      <li><b>Next ▶</b> — move to the next-ranked exhibit (e.g. from #5 to #6).</li>
-      <li><b>Reset</b> — return to the starting overview shot.</li>
-      <li><b>Jump to #</b> — type a rank and press Enter (or click Go) to fly directly to that exhibit.</li>
+      <li><b>Drag (left mouse / one finger):</b> orbit the camera. Full 360° horizontal and vertical range.</li>
+      <li><b>Right-click drag:</b> pan the look-at target across the scene.</li>
+      <li><b>Scroll / two-finger slide:</b> zoom in or out. Slide sideways to orbit. Hold <b>Shift</b> while scrolling to pan.</li>
+      <li><b>Pinch (trackpad):</b> zoom in or out.</li>
+      <li><b>WASD / Arrow keys:</b> walk through the museum. <b>Q</b> and <b>E</b> raise and lower the camera.</li>
+      <li><b>◀ Prev:</b> move to the previous-ranked exhibit (e.g. from #5 to #4).</li>
+      <li><b>Next ▶:</b> move to the next-ranked exhibit (e.g. from #5 to #6).</li>
+      <li><b>Reset:</b> return to the starting overview shot.</li>
+      <li><b>Jump to #:</b> type a rank and press Enter (or click Go) to fly directly to that exhibit.</li>
     </ul>
 
     <button class="close" onclick="closeMethod()">Got it</button>
@@ -548,33 +551,60 @@ function podiumDecal(g){
   return tex(c);
 }
 
-function coverCard(g){
-  const W=460,H=620,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
-  const base=g.color, dk=shade(base,0.45), lt=shade(base,1.25);
-  const grad=x.createLinearGradient(0,0,W,H); grad.addColorStop(0,lt); grad.addColorStop(1,dk);
-  x.fillStyle=grad; x.fillRect(0,0,W,H);
-  let s=0; for(const ch of g.title) s=(s*31+ch.charCodeAt(0))>>>0;
-  const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};
-  x.globalAlpha=0.16;
-  for(let i=0;i<5;i++){
-    const t=rnd();
-    x.fillStyle=t>0.5?'#ffffff':'#000000';
-    if(rnd()>0.5){x.beginPath();x.arc(rnd()*W,rnd()*H,60+rnd()*150,0,7);x.fill();}
-    else{x.save();x.translate(rnd()*W,rnd()*H);x.rotate(rnd()*6);x.fillRect(-150,-22,300,44);x.restore();}
-  }
-  x.globalAlpha=1;
-  x.fillStyle='rgba(255,255,255,0.9)'; x.font="700 22px 'Hanken Grotesk',sans-serif"; x.textAlign='left';
+const imageCache={};
+function loadGameImage(path){
+  if(!path) return Promise.resolve(null);
+  if(imageCache[path]) return Promise.resolve(imageCache[path]);
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{ imageCache[path]=img; resolve(img); };
+    img.onerror=()=>resolve(null);
+    img.src=path;
+  });
+}
+async function preloadGameImages(){
+  await Promise.all(GAMES.map(g=>loadGameImage(g.image)));
+}
+
+function drawCoverLabels(x,W,H,g){
+  x.fillStyle='rgba(255,255,255,0.92)'; x.font="700 22px 'Hanken Grotesk',sans-serif"; x.textAlign='left';
   x.fillText(g.platform.toUpperCase()+'  ·  '+g.era, 28, 42);
-  const bg=x.createLinearGradient(0,H-230,0,H); bg.addColorStop(0,'rgba(0,0,0,0)'); bg.addColorStop(1,'rgba(0,0,0,0.72)');
+  const bg=x.createLinearGradient(0,H-230,0,H); bg.addColorStop(0,'rgba(0,0,0,0)'); bg.addColorStop(1,'rgba(0,0,0,0.78)');
   x.fillStyle=bg; x.fillRect(0,H-230,W,230);
   x.fillStyle='#fff'; x.textAlign='left'; x.textBaseline='alphabetic';
-  const words=g.title.split(' '); let fs=52,lns=[],cur='';
+  const words=g.title.split(' '); let fs=52,lns=[];
   const wrap=(size)=>{x.font=`800 ${size}px 'Bricolage Grotesque',sans-serif`;const L=[];let cu='';
     for(const w of words){const t=cu?cu+' '+w:w; if(x.measureText(t).width>W-56&&cu){L.push(cu);cu=w;}else cu=t;}if(cu)L.push(cu);return L;};
   lns=wrap(fs); while(lns.length>3&&fs>30){fs-=3;lns=wrap(fs);} lns=lns.slice(0,3);
   x.font=`800 ${fs}px 'Bricolage Grotesque',sans-serif`;
   let yy=H-34-(lns.length-1)*fs*1.04; lns.forEach((s2,i)=>x.fillText(s2,28,yy+i*fs*1.04));
   x.strokeStyle='rgba(255,255,255,0.85)'; x.lineWidth=10; x.strokeRect(5,5,W-10,H-10);
+}
+
+function coverCard(g){
+  const W=460,H=620,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const photo=g.image ? imageCache[g.image] : null;
+  if(photo){
+    const sc=Math.max(W/photo.width, H/photo.height);
+    const dw=photo.width*sc, dh=photo.height*sc;
+    x.drawImage(photo, (W-dw)/2, (H-dh)/2, dw, dh);
+    drawCoverLabels(x,W,H,g);
+  } else {
+    const base=g.color, dk=shade(base,0.45), lt=shade(base,1.25);
+    const grad=x.createLinearGradient(0,0,W,H); grad.addColorStop(0,lt); grad.addColorStop(1,dk);
+    x.fillStyle=grad; x.fillRect(0,0,W,H);
+    let s=0; for(const ch of g.title) s=(s*31+ch.charCodeAt(0))>>>0;
+    const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};
+    x.globalAlpha=0.16;
+    for(let i=0;i<5;i++){
+      const t=rnd();
+      x.fillStyle=t>0.5?'#ffffff':'#000000';
+      if(rnd()>0.5){x.beginPath();x.arc(rnd()*W,rnd()*H,60+rnd()*150,0,7);x.fill();}
+      else{x.save();x.translate(rnd()*W,rnd()*H);x.rotate(rnd()*6);x.fillRect(-150,-22,300,44);x.restore();}
+    }
+    x.globalAlpha=1;
+    drawCoverLabels(x,W,H,g);
+  }
   return tex(c);
 }
 
@@ -877,7 +907,7 @@ let fly=null;
 
 const PITCH_LIMIT = Math.PI/2 - 0.015;  /* near-full vertical orbit; tiny margin avoids flip */
 const PITCH_MIN   = -PITCH_LIMIT;
-const ORBIT_SENS  = 0.0065;
+const ORBIT_SENS  = 0.0085;
 const ZOOM_MIN    = 3;
 const ZOOM_MAX_MUL = 2.4;
 
@@ -960,20 +990,63 @@ canvas.addEventListener('mousemove',e=>{
     pm={x:e.clientX,y:e.clientY};
   }
 });
+function wheelDelta(e){
+  let dx=e.deltaX, dy=e.deltaY;
+  if(e.deltaMode===1){ dx*=18; dy*=18; }
+  else if(e.deltaMode===2){ dx*=120; dy*=120; }
+  return {dx,dy};
+}
 canvas.addEventListener('wheel',e=>{
   userTookCamera();
   const zMax = Math.max(120, (ROW_W||200)*ZOOM_MAX_MUL);
-  radius=Math.max(ZOOM_MIN, Math.min(zMax, radius+e.deltaY*0.07));
+  const {dx,dy}=wheelDelta(e);
+  if(e.ctrlKey || e.metaKey){
+    radius=Math.max(ZOOM_MIN, Math.min(zMax, radius+dy*0.045));
+  } else if(e.shiftKey){
+    const k=radius*0.002;
+    const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+    const fwd=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));
+    target.addScaledVector(right,-dx*k);
+    target.addScaledVector(fwd,dy*k);
+  } else {
+    if(Math.abs(dx)>0.5) yaw-=dx*0.005;
+    if(Math.abs(dy)>0.5){
+      const zoomStep=Math.abs(dy)<40 ? 0.04 : 0.07;
+      radius=Math.max(ZOOM_MIN, Math.min(zMax, radius+dy*zoomStep));
+    }
+  }
   e.preventDefault();
 },{passive:false});
 
-/* touch (single-finger orbit) */
-let lt=null;
-canvas.addEventListener('touchstart',e=>{userTookCamera(); lt=e.touches[0];},{passive:false});
-canvas.addEventListener('touchmove',e=>{const t=e.touches[0];
-  yaw -= (t.clientX-lt.clientX)*ORBIT_SENS;
-  pitch = Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch - (t.clientY-lt.clientY)*ORBIT_SENS));
-  lt=t;e.preventDefault();},{passive:false});
+/* touch: one-finger orbit, two-finger pan/zoom */
+let lt=null, tt=null;
+canvas.addEventListener('touchstart',e=>{
+  userTookCamera();
+  if(e.touches.length===1) lt=e.touches[0];
+  else if(e.touches.length===2) tt=[{x:e.touches[0].clientX,y:e.touches[0].clientY},{x:e.touches[1].clientX,y:e.touches[1].clientY}];
+},{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  if(e.touches.length===1 && lt){
+    const t=e.touches[0];
+    yaw-=(t.clientX-lt.clientX)*ORBIT_SENS;
+    pitch=Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch-(t.clientY-lt.clientY)*ORBIT_SENS));
+    lt=t;
+  } else if(e.touches.length===2 && tt){
+    const a={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    const b={x:e.touches[1].clientX,y:e.touches[1].clientY};
+    const midX=(a.x+b.x)/2, midY=(a.y+b.y)/2;
+    const prevMidX=(tt[0].x+tt[1].x)/2, prevMidY=(tt[0].y+tt[1].y)/2;
+    const dist=Math.hypot(b.x-a.x,b.y-a.y);
+    const prevDist=Math.hypot(tt[1].x-tt[0].x, tt[1].y-tt[0].y);
+    yaw-=(midX-prevMidX)*ORBIT_SENS*1.4;
+    pitch=Math.max(PITCH_MIN, Math.min(PITCH_LIMIT, pitch-(midY-prevMidY)*ORBIT_SENS*1.4));
+    const zMax=Math.max(120,(ROW_W||200)*ZOOM_MAX_MUL);
+    radius=Math.max(ZOOM_MIN, Math.min(zMax, radius+(prevDist-dist)*0.08));
+    tt=[a,b];
+  }
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener('touchend',()=>{ lt=null; tt=null; });
 
 addEventListener('keydown',e=>{
   if(document.activeElement && document.activeElement.id==='jump-input') return;
@@ -1081,8 +1154,10 @@ function setActive(i){
 /* ════════════════════════ DETAIL PANEL ════════════════════════ */
 function showDetail(i){
   const g=GAMES[i]; const pct=Math.round(g.sales/MAX_SALES*100);
+  const coverImg=g.image?`<img class="d-cover" src="${g.image}" alt="${g.title} cover art" loading="lazy">`:'';
   document.getElementById('dcontent').innerHTML=`
     <div class="d-rank">Rank #${g.rank} · all-time</div>
+    ${coverImg}
     <div class="d-title">${g.title}</div>
     <div class="d-pub">${flagDetailHTML(g.region)} ${g.publisher} · ${REGION_NAME[g.region]||g.region}</div>
     <div class="d-sales">${g.sales}<span>M</span></div>
@@ -1245,6 +1320,7 @@ addEventListener('resize',()=>{
   document.getElementById('jump-input').max = topRank;
   document.getElementById('jump-input').placeholder = '1–'+topRank;
 
+  await preloadGameImages();
   buildSceneFurniture();
   buildExhibits();
 
